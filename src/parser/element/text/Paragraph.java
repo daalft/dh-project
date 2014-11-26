@@ -1,5 +1,6 @@
 package parser.element.text;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 /**
@@ -10,6 +11,10 @@ import java.util.List;
 public class Paragraph implements Iterable<Sentence> {
 
 	private List<Sentence> sentences;
+	
+	public Paragraph() {
+		sentences = new ArrayList<>();
+	}
 	
 	public Sentence getSentence (int position) {
 		return sentences.get(position);

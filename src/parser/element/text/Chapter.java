@@ -1,5 +1,6 @@
 package parser.element.text;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 /**
@@ -11,6 +12,10 @@ public class Chapter implements Iterable<Paragraph> {
 
 	private List<Paragraph> paragraphs;
 	private int chapterNumber;
+
+	public Chapter() {
+		paragraphs = new ArrayList<>();
+	}
 	
 	@Override
 	public Iterator<Paragraph> iterator() {

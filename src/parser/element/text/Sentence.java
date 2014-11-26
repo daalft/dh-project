@@ -1,5 +1,6 @@
 package parser.element.text;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 /**
@@ -12,6 +13,10 @@ public class Sentence implements Iterable<AnnotatedWord> {
 	private List<AnnotatedWord> words;
 	private int sentenceNumber;
 
+	public Sentence() {
+		words = new ArrayList<>();
+	}
+	
 	@Override
 	public Iterator<AnnotatedWord> iterator() {
 		return words.iterator();
