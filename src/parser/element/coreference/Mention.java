@@ -11,10 +11,7 @@ public class Mention {
 	 * Textual representation
 	 */
 	private String textMention;
-	/**
-	 * NE Type
-	 */
-	private NEType type;
+
 	/**
 	 * Sentence number this mention occurs in
 	 */
@@ -22,10 +19,6 @@ public class Mention {
 	
 	public String getTextMention () {
 		return textMention;
-	}
-	
-	public NEType getType () {
-		return type;
 	}
 	
 	public int getOccursInSentenceNum () {
