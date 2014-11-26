@@ -12,6 +12,7 @@ public class AnnotatedWord {
 					lemma,
 					pos;
 	private NEType type;
+	private int id;
 	
 	public String getWord () {
 		return word;
@@ -27,5 +28,9 @@ public class AnnotatedWord {
 	
 	public NEType getType () {
 		return type;
+	}
+	
+	public int getId () {
+		return id;
 	}
 }
