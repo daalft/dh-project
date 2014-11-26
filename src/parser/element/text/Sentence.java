@@ -1,0 +1,27 @@
+package parser.element.text;
+
+import java.util.Iterator;
+import java.util.List;
+
+public class Sentence implements Iterable<AnnotatedWord> {
+
+	private List<AnnotatedWord> words;
+	private int sentenceNumber;
+
+	@Override
+	public Iterator<AnnotatedWord> iterator() {
+		return words.iterator();
+	}
+	
+	public int getSentenceNumber () {
+		return sentenceNumber;
+	}
+	
+	public AnnotatedWord getWord (int position) {
+		return words.get(position);
+	}
+	
+	public List<AnnotatedWord> getWords () {
+		return words;
+	}
+}
