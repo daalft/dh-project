@@ -1,7 +1,11 @@
 package parser.element.text;
 
 import parser.element.NEType;
-
+/**
+ * Represents an annotated word
+ * @author David
+ *
+ */
 public class AnnotatedWord {
 
 	private String 	word,

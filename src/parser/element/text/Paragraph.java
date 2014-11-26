@@ -1,16 +1,26 @@
 package parser.element.text;
 
+import java.util.Iterator;
 import java.util.List;
-
-public class Paragraph {
+/**
+ * Represents a paragraph in a text consisting of sentences.
+ * @author David
+ *
+ */
+public class Paragraph implements Iterable<Sentence> {
 
 	private List<Sentence> sentences;
+	
+	public Sentence getSentence (int position) {
+		return sentences.get(position);
+	}
 	
 	public List<Sentence> getSentences () {
 		return sentences;
 	}
-	
-	public Sentence getSentence (int position) {
-		return sentences.get(position);
+
+	@Override
+	public Iterator<Sentence> iterator() {
+		return sentences.iterator();
 	}
 }

@@ -2,7 +2,11 @@ package parser.element.text;
 
 import java.util.Iterator;
 import java.util.List;
-
+/**
+ * Represents a chapter from a book consisting of paragraphs
+ * @author s2daalft
+ *
+ */
 public class Chapter implements Iterable<Paragraph> {
 
 	private List<Paragraph> paragraphs;
@@ -17,4 +21,7 @@ public class Chapter implements Iterable<Paragraph> {
 		return chapterNumber;
 	}
 
+	public List<Paragraph> getParagraphs () {
+		return paragraphs;
+	}
 }

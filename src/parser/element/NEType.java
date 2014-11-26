@@ -1,5 +1,9 @@
 package parser.element;
-
+/**
+ * Named Entity type enumeration
+ * @author David
+ *
+ */
 public enum NEType {
 
 	PERSON, LOCATION;

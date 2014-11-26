@@ -2,7 +2,11 @@ package parser.element.text;
 
 import java.util.Iterator;
 import java.util.List;
-
+/**
+ * Represents a sentence consisting of annotated words.
+ * @author David
+ *
+ */
 public class Sentence implements Iterable<AnnotatedWord> {
 
 	private List<AnnotatedWord> words;
