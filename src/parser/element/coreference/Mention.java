@@ -9,11 +9,16 @@ public class Mention implements Cloneable {
 	 * Textual representation
 	 */
 	private String textMention;
-
 	/**
-	 * Sentence number this mention occurs in
+	 * Is this Mention representative for the entity?
 	 */
-	private int occursInSentenceNum;
+	private boolean isRepresentative;
+	/**
+	 * Numbers
+	 */
+	private int occursInSentenceNum, 
+	wordNumberStart, wordNumberEnd, wordNumberHead;
+	
 	
 	public Mention() {
 	
@@ -24,6 +29,46 @@ public class Mention implements Cloneable {
 		this.occursInSentenceNum = occursIn;
 	}
 	
+	public boolean isRepresentative() {
+		return isRepresentative;
+	}
+
+	public void setRepresentative(boolean isRepresentative) {
+		this.isRepresentative = isRepresentative;
+	}
+
+	public int getWordNumberStart() {
+		return wordNumberStart;
+	}
+
+	public void setWordNumberStart(int wordStart) {
+		this.wordNumberStart = wordStart;
+	}
+
+	public int getWordNumberEnd() {
+		return wordNumberEnd;
+	}
+
+	public void setWordNumberEnd(int wordEnd) {
+		this.wordNumberEnd = wordEnd;
+	}
+
+	public int getWordNumberHead() {
+		return wordNumberHead;
+	}
+
+	public void setWordNumberHead(int wordHead) {
+		this.wordNumberHead = wordHead;
+	}
+
+	public void setTextMention(String textMention) {
+		this.textMention = textMention;
+	}
+
+	public void setOccursInSentenceNum(int occursInSentenceNum) {
+		this.occursInSentenceNum = occursInSentenceNum;
+	}
+
 	public String getTextMention () {
 		return textMention;
 	}
