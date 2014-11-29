@@ -1,4 +1,4 @@
-package preface;
+package preface.analysis;
 
 import java.util.List;
 
