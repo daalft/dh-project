@@ -1,4 +1,4 @@
-package parser.element.text;
+package preface.parser.element.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;

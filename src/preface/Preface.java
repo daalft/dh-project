@@ -2,17 +2,17 @@ package preface;
 
 import java.util.List;
 
-import parser.Parser;
-import parser.element.NEType;
-import parser.element.coreference.Entity;
-import parser.element.coreference.Mention;
-import parser.element.text.AnnotatedWord;
-import parser.element.text.Chapter;
-import parser.element.text.Paragraph;
-import parser.element.text.Sentence;
-import preface.tree.FrequencyNode;
-import preface.tree.Node;
-import preface.tree.Tree;
+import preface.analysis.tree.FrequencyNode;
+import preface.analysis.tree.Node;
+import preface.analysis.tree.Tree;
+import preface.parser.Parser;
+import preface.parser.element.NEType;
+import preface.parser.element.coreference.Entity;
+import preface.parser.element.coreference.Mention;
+import preface.parser.element.text.AnnotatedWord;
+import preface.parser.element.text.Chapter;
+import preface.parser.element.text.Paragraph;
+import preface.parser.element.text.Sentence;
 
 /**
  * PreVisualizer Frequency Analyzer and Co-occurrence Extractor

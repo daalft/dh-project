@@ -1,4 +1,4 @@
-package preface.tree;
+package preface.analysis.tree;
 
 import java.util.ArrayList;
 import java.util.List;

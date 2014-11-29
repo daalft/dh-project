@@ -1,10 +1,10 @@
-package parser;
+package preface.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import parser.element.coreference.Entity;
-import parser.element.text.Chapter;
+import preface.parser.element.coreference.Entity;
+import preface.parser.element.text.Chapter;
 
 public class Parser {
 
