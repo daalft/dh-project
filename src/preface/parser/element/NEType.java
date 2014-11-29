@@ -1,4 +1,4 @@
-package parser.element;
+package preface.parser.element;
 /**
  * Named Entity type enumeration
  * @author David

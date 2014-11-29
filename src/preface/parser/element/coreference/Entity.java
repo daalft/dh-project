@@ -1,11 +1,11 @@
-package parser.element.coreference;
+package preface.parser.element.coreference;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import parser.element.NEType;
+import preface.parser.element.NEType;
 
 /**
  * Represents an entity (i.e. a list of coreferent mentions)

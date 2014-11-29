@@ -1,36 +1,40 @@
-package parser;
+package preface.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import parser.element.coreference.Entity;
-import parser.element.text.Text;
+import preface.parser.element.coreference.Entity;
+import preface.parser.element.text.Chapter;
 
 public class Parser {
 
 	private List<Entity> entities;
-	private Text text;
+	private Chapter chapter;
 	
 	public Parser () {
 		entities = new ArrayList<Entity>();
-		text = new Text();
+		chapter = new Chapter();
 	}
 	
 	public List<Entity> getEntities () {
 		return entities;
 	}
 	
-	public Text getText () {
-		return text;
+	public Chapter getChapter () {
+		return chapter;
 	}
 	
 	public void dispose () {
 		entities = null;
-		text = null;
+		chapter = null;
 		try {
 			this.finalize();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void parse() {
+
 	}
 }
