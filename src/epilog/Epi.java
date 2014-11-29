@@ -1,6 +1,8 @@
 package epilog;
 /**
- * Export picture i
+ * Export produced image
+ * <br/><br/>
+ * Exports a snapshot of a given generated graph as graphic
  * @author David
  *
  */
