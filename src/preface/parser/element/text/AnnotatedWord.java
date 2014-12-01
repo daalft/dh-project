@@ -1,6 +1,6 @@
-package parser.element.text;
+package preface.parser.element.text;
 
-import parser.element.NEType;
+import preface.parser.element.NEType;
 /**
  * Represents an annotated word
  * @author David

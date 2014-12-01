@@ -1,4 +1,4 @@
-package preface.tree;
+package preface.analysis.tree;
 
 public class TreeTransformer {
 

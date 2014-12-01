@@ -1,13 +1,18 @@
-package preface;
+package preface.analysis;
 
 import java.util.List;
 
-import preface.parser.*;
-import preface.parser.element.*;
-import preface.parser.element.coreference.*;
-import preface.parser.element.text.*;
-import preface.analysis.tree.*;
-
+import preface.analysis.tree.FrequencyNode;
+import preface.analysis.tree.Node;
+import preface.analysis.tree.Tree;
+import preface.parser.Parser;
+import preface.parser.element.NEType;
+import preface.parser.element.coreference.Entity;
+import preface.parser.element.coreference.Mention;
+import preface.parser.element.text.AnnotatedWord;
+import preface.parser.element.text.Chapter;
+import preface.parser.element.text.Paragraph;
+import preface.parser.element.text.Sentence;
 
 /**
  * PreVisualizer Frequency Analyzer and Co-occurrence Extractor
@@ -29,26 +34,16 @@ public class Preface {
 	}
 
 	public void run () {
-		
 		Tree t = new Tree();
-		
-		// TODO create textNode?
-		
-		// PARSING BLOCK
-		
+		// create textNode?
 		Parser p = new Parser();
 		p.parse();
 		List<Entity> entities = p.getEntities();
 		Chapter chapter = p.getChapter();
 		p.dispose();
-		
-		// END PARSING BLOCK
-		
-		Node<Integer> chapterNode = new Node<>(chapter.getChapterNumber());
-		
+		Node<Chapter> chapterNode = new Node<>(chapter);
 		// TODO change to textNode?
 		t.setRoot(chapterNode);
-		
 		for (Entity e : entities) {
 			Node<Entity> entityNode = new Node<>(e);
 			chapterNode.addChild(entityNode);
@@ -71,7 +66,7 @@ public class Preface {
 
 						// for network between people
 						if (w.getType().equals(NEType.PERSON) && mentionType.equals(NEType.PERSON)) {
-							// TODO link this entity to other entity?
+
 						}
 						// if we have a search window limit
 						if (searchWindow > 0) {
