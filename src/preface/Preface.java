@@ -34,16 +34,26 @@ public class Preface {
 	}
 
 	public void run () {
+		
 		Tree t = new Tree();
-		// create textNode?
+		
+		// TODO create textNode?
+		
+		// PARSING BLOCK
+		
 		Parser p = new Parser();
 		p.parse();
 		List<Entity> entities = p.getEntities();
 		Chapter chapter = p.getChapter();
 		p.dispose();
-		Node<Chapter> chapterNode = new Node<>(chapter);
+		
+		// END PARSING BLOCK
+		
+		Node<Integer> chapterNode = new Node<>(chapter.getChapterNumber());
+		
 		// TODO change to textNode?
 		t.setRoot(chapterNode);
+		
 		for (Entity e : entities) {
 			Node<Entity> entityNode = new Node<>(e);
 			chapterNode.addChild(entityNode);
@@ -66,7 +76,7 @@ public class Preface {
 
 						// for network between people
 						if (w.getType().equals(NEType.PERSON) && mentionType.equals(NEType.PERSON)) {
-
+							// TODO link this entity to other entity?
 						}
 						// if we have a search window limit
 						if (searchWindow > 0) {
