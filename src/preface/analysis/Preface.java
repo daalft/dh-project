@@ -1,10 +1,9 @@
 package preface.analysis;
 
+import java.util.HashMap;
 import java.util.List;
 
-import preface.analysis.tree.FrequencyNode;
-import preface.analysis.tree.Node;
-import preface.analysis.tree.Tree;
+import preface.analysis.result.Result;
 import preface.parser.Parser;
 import preface.parser.element.NEType;
 import preface.parser.element.coreference.Entity;
@@ -23,7 +22,12 @@ public class Preface {
 
 	//private boolean bagOfWords;
 	private int searchWindow = -1;
-
+	private HashMap<Entity, Result> map;
+	
+	public Preface () {
+		map = new HashMap<>();
+	}
+	
 	public void setSearchWindow (int i) {
 		if (i < 1) {
 			System.err.println("Search window size must be at least 1"
@@ -34,27 +38,15 @@ public class Preface {
 	}
 
 	public void run () {
-		Tree t = new Tree();
-		// create textNode?
+
 		Parser p = new Parser();
 		p.parse();
 		List<Entity> entities = p.getEntities();
 		Chapter chapter = p.getChapter();
 		p.dispose();
-		Node<Chapter> chapterNode = new Node<>(chapter);
-		// TODO change to textNode?
-		t.setRoot(chapterNode);
+		
 		for (Entity e : entities) {
-			Node<Entity> entityNode = new Node<>(e);
-			chapterNode.addChild(entityNode);
-			// build new nodes
-			// based on POS
-			Node<String> nounNode = new Node<>("NOUN");
-			Node<String> verbNode = new Node<>("VERB");
-			Node<String> adjNode = new Node<>("ADJECTIVE");
-			entityNode.addChild(adjNode);
-			entityNode.addChild(verbNode);
-			entityNode.addChild(nounNode);
+			Result r = new Result();
 			for (Mention m : e) {
 				// find content in context based on parameters
 				int leftLimit = m.getWordNumberStart();
@@ -63,53 +55,29 @@ public class Preface {
 					Sentence s = para.getSentence(m.getOccursInSentenceNum());
 					NEType mentionType = s.getWord(m.getWordNumberHead()).getType();
 					for (AnnotatedWord w : s) {
-
 						// for network between people
 						if (w.getType().equals(NEType.PERSON) && mentionType.equals(NEType.PERSON)) {
-
+							r.link(w);
 						}
 						// if we have a search window limit
 						if (searchWindow > 0) {
 							// continue until we are inside the window 
-							if (w.getId() < (leftLimit - searchWindow) 
-									|| w.getId() > (rightLimit + searchWindow))
+							if (w.getId() < (leftLimit - searchWindow))
 								continue;
+							// break if we are outside the window
+							if (w.getId() > (rightLimit + searchWindow))
+								break;
 						}
-						if (w.getPOS().matches("NN\\w?")) { // nouns
-							// build new node with word -> frequency
-							// or check for existing node in entityNode and increase freq
-							FrequencyNode fn = new FrequencyNode(w.getLemma());
-							if (nounNode.contains(fn)) {
-								((FrequencyNode) nounNode
-										.get(nounNode.indexOf(fn)))
-										.increaseFrequency();
-							} else {
-								nounNode.addChild(fn);
-							}
-						}
-						if (w.getPOS().matches("VB\\w?")) { // verbs
-							FrequencyNode fn = new FrequencyNode(w.getLemma());
-							if (verbNode.contains(fn)) {
-								((FrequencyNode) verbNode
-										.get(verbNode.indexOf(fn)))
-										.increaseFrequency();
-							} else {
-								verbNode.addChild(fn);
-							}
-						}
-						if (w.getPOS().equals("JJ\\w?")) { // adjectives
-							FrequencyNode fn = new FrequencyNode(w.getLemma());
-							if (adjNode.contains(fn)) {
-								((FrequencyNode) adjNode
-										.get(adjNode.indexOf(fn)))
-										.increaseFrequency();
-							} else {
-								adjNode.addChild(fn);
-							}
+						if (w.getPOS().matches("NN\\w?") || 
+								w.getPOS().matches("VB\\w?") ||
+								w.getPOS().equals("JJ\\w?")) { 
+							r.add(w, chapter.getChapterNumber());
 						}
 					}
 				}				
 			}
+			if (!r.isEmpty())
+				map.put(e, r);
 		}
 	}
 
