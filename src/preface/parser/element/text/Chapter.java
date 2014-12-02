@@ -29,4 +29,9 @@ public class Chapter implements Iterable<Paragraph> {
 	public List<Paragraph> getParagraphs () {
 		return paragraphs;
 	}
+	
+	@Override
+	public String toString () {
+		return "Chapter " + chapterNumber;
+	}
 }
