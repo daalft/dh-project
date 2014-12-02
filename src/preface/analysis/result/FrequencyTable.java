@@ -8,6 +8,10 @@ public class FrequencyTable {
 
 	private HashMap<AnnotatedWord, Integer> map;
 
+	public FrequencyTable() {
+		map = new HashMap<AnnotatedWord, Integer>();
+	}
+	
 	public void add(AnnotatedWord w) {
 		if (map.containsKey(w)) {
 			map.put(w, map.get(w)+1);
