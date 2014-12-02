@@ -29,6 +29,10 @@ public class Result {
 	public void add(AnnotatedWord w, int chapter) {
 		if (words.containsKey(chapter)) {
 			words.get(chapter).add(w);
+		} else {
+			FrequencyTable ft = new FrequencyTable();
+			ft.add(w);
+			words.put(chapter, ft);
 		}
 	}
 
