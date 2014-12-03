@@ -12,6 +12,7 @@ import preface.parser.element.text.AnnotatedWord;
 import preface.parser.element.text.Chapter;
 import preface.parser.element.text.Paragraph;
 import preface.parser.element.text.Sentence;
+import test.DummyParser;
 
 /**
  * PreVisualizer Frequency Analyzer and Co-occurrence Extractor
@@ -39,7 +40,7 @@ public class Preface {
 
 	public void run () {
 
-		Parser p = new Parser();
+		DummyParser p = new DummyParser();
 		p.parse();
 		List<Entity> entities = p.getEntities();
 		Chapter chapter = p.getChapter();
@@ -52,7 +53,7 @@ public class Preface {
 				int leftLimit = m.getWordNumberStart();
 				int rightLimit = m.getWordNumberEnd();
 				for (Paragraph para : chapter) {
-					Sentence s = para.getSentence(m.getOccursInSentenceNum());
+					Sentence s = para.getSentence(m.getOccursInSentenceNum()-1);
 					NEType mentionType = s.getWord(m.getWordNumberHead()).getType();
 					for (AnnotatedWord w : s) {
 						// for network between people

@@ -6,6 +6,6 @@ package preface.parser.element;
  */
 public enum NEType {
 
-	PERSON, LOCATION;
+	PERSON, LOCATION, OTHER, NUMBER;
 	// TODO add other necessary named entity types
 }

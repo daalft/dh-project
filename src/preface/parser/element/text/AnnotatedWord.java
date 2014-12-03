@@ -11,7 +11,7 @@ public class AnnotatedWord {
 	private String 	word,
 					lemma,
 					pos;
-	private NEType type;
+	private NEType type = NEType.OTHER;
 	private int id;
 	
 	public String getWord () {
@@ -32,5 +32,31 @@ public class AnnotatedWord {
 	
 	public int getId () {
 		return id;
+	}
+
+	public void setWord(String word) {
+		this.word = word;
+		if (lemma == null) {
+			lemma = word;
+		}
+		if (pos == null) {
+			pos = word;
+		}
+	}
+
+	public void setLemma(String lemma) {
+		this.lemma = lemma;
+	}
+
+	public void setPOS(String pos) {
+		this.pos = pos;
+	}
+
+	public void setType(NEType type) {
+		this.type = type;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }

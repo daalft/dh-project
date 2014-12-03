@@ -45,4 +45,14 @@ public class Entity implements Iterable<Mention> {
 	public NEType getType () {
 		return type;
 	}
+	
+	public void add (Mention m) {
+		mentions.add(m);
+		if (m.isRepresentative())
+			representativeMention = m.getTextMention();
+	}
+
+	public void setType(NEType type) {
+		this.type = type;
+	}
 }

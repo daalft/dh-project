@@ -28,4 +28,8 @@ public class Paragraph implements Iterable<Sentence> {
 	public Iterator<Sentence> iterator() {
 		return sentences.iterator();
 	}
+	
+	public void add(Sentence s) {
+		sentences.add(s);
+	}
 }

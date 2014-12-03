@@ -1,9 +1,6 @@
 package preface.analysis.result;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import preface.parser.element.text.AnnotatedWord;
 
 public class Result {
@@ -11,19 +8,24 @@ public class Result {
 	/**
 	 * Links between named entites
 	 */
-	private List<AnnotatedWord> links;
+	private HashMap<AnnotatedWord, Integer> links;
+	
 	/**
 	 * Chapter -> (word->frequency)
 	 */
 	private HashMap<Integer, FrequencyTable> words;
 	
 	public Result() {
-		links = new ArrayList<>();
+		links = new HashMap<>();
 		words = new HashMap<>();
 	}
 	
 	public void link(AnnotatedWord w) {
-		links.add(w);
+		if (links.containsKey(w)) {
+			links.put(w, links.get(w)+1);
+		} else {
+			links.put(w, 1);
+		}
 	}
 
 	public void add(AnnotatedWord w, int chapter) {

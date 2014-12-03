@@ -17,6 +17,11 @@ public class Sentence implements Iterable<AnnotatedWord> {
 		words = new ArrayList<>();
 	}
 	
+	public Sentence(int i) {
+		this();
+		this.sentenceNumber = i;
+	}
+	
 	@Override
 	public Iterator<AnnotatedWord> iterator() {
 		return words.iterator();
@@ -32,5 +37,13 @@ public class Sentence implements Iterable<AnnotatedWord> {
 	
 	public List<AnnotatedWord> getWords () {
 		return words;
+	}
+	
+	public void add(AnnotatedWord w) {
+		words.add(w);
+	}
+	
+	public void setSentenceNumber (int n) {
+		sentenceNumber = n;
 	}
 }

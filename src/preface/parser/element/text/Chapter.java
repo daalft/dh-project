@@ -34,4 +34,12 @@ public class Chapter implements Iterable<Paragraph> {
 	public String toString () {
 		return "Chapter " + chapterNumber;
 	}
+
+	public void setChapterNumber(int i) {
+		chapterNumber = i;
+	}
+	
+	public void addParagraph (Paragraph p) {
+		paragraphs.add(p);
+	}
 }
