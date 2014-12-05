@@ -83,7 +83,6 @@ public class Preface {
 	}
 
 	public static void main(String[] args) {
-		//new Preface().run();
-		new preface.parser.Parser().parse();
+		new Preface().run();
 	}
 }

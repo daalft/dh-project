@@ -67,6 +67,8 @@ public class Parser {
 						
 					case XMLStreamConstants.START_ELEMENT:
 						spacer.append("  ");
+						if(parser.getLocalName()== "start")
+							System.out.println("Wooho push start"); // here should the element be initialised instead of printing it
 						System.out.println(spacer + "START_ELEMENT: " + parser.getLocalName());
 						for (int i = 0; i < parser.getAttributeCount(); i++)
 							System.out.println(spacer + "Attribut: "
@@ -97,7 +99,7 @@ public class Parser {
 		}
 	}
 	
-	public void main(String args[]) {
-		this.parse();
+	public static void main(String args[]) {
+		new Parser().parse();
 	}
 }
