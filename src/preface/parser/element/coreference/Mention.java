@@ -110,4 +110,11 @@ public class Mention implements Cloneable {
 	public Mention clone () {
 		return new Mention(this.textMention, this.occursInSentenceNum);
 	}
+	
+	public String toString(){
+		return  "Start: " + this.getWordNumberStart()
+				+"\n"+ "End: " + this.getWordNumberEnd()
+				+"\n"+ "Head: " + this.getWordNumberHead()
+				+"\n"+"Text: "+ this.getTextMention();
+	}
 }
