@@ -22,7 +22,7 @@ public class Polaris {
 	private void initialize () throws IOException {
 		if (debug > 5)
 			System.err.println("Loading Polaris...");
-		File defaultFile = new File("polarity.pi");
+		File defaultFile = new File("./data/polarity.pi");
 		if (defaultFile.canRead()) {
 			BufferedReader br = new BufferedReader(new FileReader(defaultFile));
 			String l = "";
@@ -42,6 +42,7 @@ public class Polaris {
 			
 		} else {
 			// either file does not exist or is not readable
+			System.err.println("Default polarity file could not be opened!");
 		}
 		if (debug > 5)
 			System.err.println("Finished loading Polaris.");
