@@ -1,6 +1,7 @@
 package preface.analysis.result;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import preface.parser.element.text.AnnotatedWord;
 
@@ -20,5 +21,11 @@ public class FrequencyTable {
 		}
 	}
 	
-	
+	public String toString () {
+		StringBuilder sb = new StringBuilder("[Frequency table]:\n");
+		for (Entry<AnnotatedWord, Integer> e : map.entrySet()) {
+			sb.append(e.getKey().toString()).append("\t").append(e.getValue().intValue()).append("\n");
+		}
+		return sb.toString();
+	}
 }
