@@ -55,4 +55,13 @@ public class Entity implements Iterable<Mention> {
 	public void setType(NEType type) {
 		this.type = type;
 	}
+	
+	public String toString () {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[Entity]\ntype:" + type);
+		for (Mention m : this) {
+			sb.append("\n"+m.toString());
+		}
+		return sb.toString();
+	}
 }

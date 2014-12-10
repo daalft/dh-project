@@ -110,4 +110,8 @@ public class Mention implements Cloneable {
 	public Mention clone () {
 		return new Mention(this.textMention, this.occursInSentenceNum);
 	}
+	
+	public String toString () {
+		return (isRepresentative ? "%" : "") + textMention + (isRepresentative ? "%" : "");
+	}
 }
