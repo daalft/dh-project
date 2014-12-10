@@ -1,9 +1,12 @@
 package preface.analysis;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import preface.analysis.result.Result;
+import preface.analysis.util.StopWords;
 import preface.parser.Parser;
 import preface.parser.element.NEType;
 import preface.parser.element.coreference.Entity;
@@ -24,9 +27,14 @@ public class Preface {
 	//private boolean bagOfWords;
 	private int searchWindow = -1;
 	private HashMap<Entity, Result> map;
+	private boolean stopWords;
 	
 	public Preface () {
 		map = new HashMap<>();
+	}
+	
+	public void setUseStopwords (boolean use) {
+		stopWords = use;
 	}
 	
 	public void setSearchWindow (int i) {
@@ -46,6 +54,8 @@ public class Preface {
 		Chapter chapter = p.getChapter();
 		p.dispose();
 		
+		StopWords stop = new StopWords();
+		
 		for (Entity e : entities) {
 			Result r = new Result();
 			for (Mention m : e) {
@@ -56,9 +66,13 @@ public class Preface {
 					Sentence s = para.getSentence(m.getOccursInSentenceNum()-1);
 					NEType mentionType = s.getWord(m.getWordNumberHead()).getType();
 					for (AnnotatedWord w : s) {
+						if (stopWords) {
+							if (stop.isStopword(w.getLemma()))
+								continue;
+						}
 						// for network between people
 						if (w.getType().equals(NEType.PERSON) && mentionType.equals(NEType.PERSON)) {
-							r.link(w);
+							r.link(e);
 						}
 						// if we have a search window limit
 						if (searchWindow > 0) {
@@ -80,9 +94,31 @@ public class Preface {
 			if (!r.isEmpty())
 				map.put(e, r);
 		}
+		try {
+			write(map);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	private void write(HashMap<Entity, Result> map) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("testoutputstops2.txt")));
+		for (Entry<Entity, Result> e : map.entrySet()) {
+			Entity currEnt = e.getKey();
+			Result currRes = e.getValue();
+			bw.write(currEnt.toString());
+			bw.write(currRes.toString());
+			bw.newLine();
+			bw.newLine();
+		}
+		bw.close();
 	}
 
 	public static void main(String[] args) {
-		new Preface().run();
+		Preface preface = new Preface();
+		preface.setUseStopwords(true);
+		preface.setSearchWindow(3);
+		preface.run();
 	}
 }
