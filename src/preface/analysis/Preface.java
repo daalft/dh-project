@@ -71,6 +71,8 @@ public class Preface {
 								continue;
 						}
 						// for network between people
+						// TODO I think this links the word to itself
+						// should link entity mention type (m or e) to w
 						if (w.getType().equals(NEType.PERSON) && mentionType.equals(NEType.PERSON)) {
 							r.link(e);
 						}
