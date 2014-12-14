@@ -34,6 +34,36 @@
           <text>a great university</text>
         </mention>
       </coreference>
+	  <coreference id="1">
+        <mention representative="true">
+          <sentence>1</sentence>
+          <start>1</start>
+          <end>3</end>
+          <head>2</head>
+          <text>James Bond</text>
+        </mention>
+        <mention>
+          <sentence>2</sentence>
+          <start>1</start>
+          <end>2</end>
+          <head>1</head>
+          <text>He</text>
+        </mention>
+        <mention>
+          <sentence>2</sentence>
+          <start>3</start>
+          <end>10</end>
+          <head>5</head>
+          <text>The super special special agent</text>
+        </mention>
+        <mention>
+          <sentence>2</sentence>
+          <start>3</start>
+          <end>6</end>
+          <head>5</head>
+          <text>007</text>
+        </mention>
+      </coreference>
     </coreferences>
   </document>
 </root>

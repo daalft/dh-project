@@ -1,7 +1,6 @@
 package preface.parser.element.coreference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,5 +53,9 @@ public class Entity implements Iterable<Mention> {
 
 	public void setType(NEType type) {
 		this.type = type;
+	}
+	
+	public String toString() {
+		return "\n"+mentions.toString();
 	}
 }

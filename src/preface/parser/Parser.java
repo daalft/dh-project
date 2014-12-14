@@ -1,15 +1,23 @@
 package preface.parser;
-import java.io.*;
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import preface.parser.element.coreference.Entity;
 import preface.parser.element.coreference.Mention;
 import preface.parser.element.text.Chapter;
-
+/**
+ * Basic STaX parser for wrapping xml into java-classes
+ * @author Julian
+ *
+ */
 public class Parser {
 
 	private List<Entity> entities;
@@ -49,56 +57,40 @@ public class Parser {
 			XMLInputFactory factory = XMLInputFactory.newInstance();
 			XMLStreamReader parser = factory.createXMLStreamReader(in);
 			
-		
-			//StringBuilder spacer = new StringBuilder();
 			while (parser.hasNext())
 			{
-				//System.out.println("Event: "+ parser.getEventType());
-				
 				switch (parser.getEventType() )
 				{
-					/**case XMLStreamConstants.START_DOCUMENT:
-						System.out.println("START_DOCUMENT: " + parser.getVersion() );
-						break;
-					**/
 					case XMLStreamConstants.END_DOCUMENT:
-						System.out.println("END_DOCUMENT: ");
 						parser.close();
-						break;
-					
+					break;
 						
 					case XMLStreamConstants.START_ELEMENT:
-						//spacer.append("  ");
 						switch(parser.getLocalName())
 						{
-							case "coreference": //equivalent zu entity
-								//System.out.println("New Coreference"); 
+							case "coreference":
 								currEnt = new Entity();
-							break;
+								break;
 								
 							case "mention":
 								currMen = new Mention();
 								if(parser.getAttributeValue(0) != null){currMen.setRepresentative(true);} //set if <mention representative = "true">
-							break; // wie wird das dann in der ToString abgefragt? NACHSCHAUEN!
+							break; 
 							
 							case "start":
 								currMen.setWordNumberStart(Integer.parseInt(parser.getElementText()));
-								System.out.println("Variable currMen.WordNRStart: "+ currMen.getWordNumberStart());
 							break;
 								
 							case "end":
 								currMen.setWordNumberEnd(Integer.parseInt(parser.getElementText()));
-								System.out.println("Variable currMen.end: "+ currMen.getWordNumberEnd());
 							break;
 							
 							case "head":
 								currMen.setWordNumberHead(Integer.parseInt(parser.getElementText()));
-								System.out.println("Variable currMen.WordNRHead: "+currMen.getWordNumberHead());
 							break;
 							
 							case "text":
 								currMen.setTextMention(parser.getElementText());
-								System.out.println("Variable currMen.Text: "+ currMen.getTextMention()); 
 							break;
 							
 							default:
@@ -113,13 +105,8 @@ public class Parser {
 								entities.add(currEnt); //fügt currEnt der Liste der entities hinzu
 							break;
 							
-							case "coreferences": //Was soll hier passieren? Liste zuende?
-								
-							break;
-							
 							case "mention":
-								currEnt.add(currMen); //WArum geht das nicht?
-								System.out.println("Close Mention: " + currEnt.iterator()); // wtf muss weg
+								currEnt.add(currMen);
 							break;	
 								
 							default:
@@ -129,8 +116,8 @@ public class Parser {
 				}
 				parser.next();
 			}
-			for (Mention m: currEnt){System.out.println(m.toString());}
-			for (Entity e: entities){System.out.println(e.toString());}
+			//for (Mention m: currEnt){System.out.println(m.toString());}
+			for (Entity e: entities){System.out.println("Entities list: " + e.toString());}
 			
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
