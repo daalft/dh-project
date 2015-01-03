@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import preface.parser.element.coreference.Entity;
 import preface.parser.element.coreference.Mention;
-import preface.parser.element.text.Chapter;
+import preface.parser.element.text.Text;
 /**
  * Basic STaX parser for wrapping xml into java-classes
  * @author Julian
@@ -21,25 +21,25 @@ import preface.parser.element.text.Chapter;
 public class Parser {
 
 	private List<Entity> entities;
-	private Chapter chapter;
+	private Text text;
 	
 	
 	public Parser () {
 		entities = new ArrayList<Entity>();
-		chapter = new Chapter();
+		text = new Text();
 	}
 	
 	public List<Entity> getEntities () {
 		return entities;
 	}
 	
-	public Chapter getChapter () {
-		return chapter;
+	public Text getText () {
+		return text;
 	}
 	
 	public void dispose () {
 		entities = null;
-		chapter = null;
+		text = null;
 		try {
 			this.finalize();
 		} catch (Throwable e) {
@@ -70,6 +70,7 @@ public class Parser {
 						{
 							case "coreference":
 								currEnt = new Entity();
+								currEnt.setId(Integer.parseInt(parser.getAttributeValue(0))); // übernimmt die ID's aus <coreference id="xx">
 								break;
 								
 							case "mention":

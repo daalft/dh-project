@@ -34,7 +34,7 @@
           <text>a great university</text>
         </mention>
       </coreference>
-	  <coreference id="1">
+	  <coreference id="2">
         <mention representative="true">
           <sentence>1</sentence>
           <start>1</start>

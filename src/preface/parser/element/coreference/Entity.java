@@ -21,6 +21,7 @@ public class Entity implements Iterable<Mention> {
 	 */
 	private List<Mention> mentions;
 	private NEType type;
+	private int id;
 	
 	public Entity () {
 		mentions = new ArrayList<Mention>();
@@ -45,6 +46,14 @@ public class Entity implements Iterable<Mention> {
 		return type;
 	}
 	
+	public void setId(int id){
+		this.id=id;
+	}
+	
+	public int getId(){
+		return id;
+	}
+	
 	public void add (Mention m) {
 		mentions.add(m);
 		if (m.isRepresentative())
@@ -56,6 +65,7 @@ public class Entity implements Iterable<Mention> {
 	}
 	
 	public String toString() {
-		return "\n"+mentions.toString();
+		return  "ID :" +id
+				+"\n"+mentions.toString();
 	}
 }
