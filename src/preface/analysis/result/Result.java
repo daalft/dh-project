@@ -59,4 +59,8 @@ public class Result {
 		sb.append("\n");
 		return sb.toString();
 	}
+	
+	public HashMap<Integer, Integer> getLinks () {
+		return links;
+	}
 }
