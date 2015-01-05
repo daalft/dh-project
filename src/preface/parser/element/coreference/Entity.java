@@ -21,6 +21,7 @@ public class Entity implements Iterable<Mention> {
 	 */
 	private List<Mention> mentions;
 	private NEType type;
+	private int id;
 	
 	public Entity () {
 		mentions = new ArrayList<Mention>();
@@ -43,6 +44,14 @@ public class Entity implements Iterable<Mention> {
 	
 	public NEType getType () {
 		return type;
+	}
+	
+	public void setId (int id) {
+		this.id = id;
+	}
+	
+	public int getId () {
+		return id;
 	}
 	
 	public void add (Mention m) {

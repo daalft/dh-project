@@ -2,6 +2,7 @@ package preface.parser.element.coreference;
 /**
  * Represents a mention (i.e. a String standing for the mention in a text of an entity)
  * @author David
+ * @author Julian
  *
  */
 public class Mention implements Cloneable {
@@ -112,6 +113,11 @@ public class Mention implements Cloneable {
 	}
 	
 	public String toString () {
-		return (isRepresentative ? "%" : "") + textMention + (isRepresentative ? "%" : "");
+				return  "\n" + "__________________"
+				+"\n"+"Representative?: " + this.isRepresentative()
+				+"\n"+ "Start: " + this.getWordNumberStart()
+				+"\n"+ "End: " + this.getWordNumberEnd()
+				+"\n"+ "Head: " + this.getWordNumberHead()
+				+"\n"+ "Text: "+ this.getTextMention();
 	}
 }
