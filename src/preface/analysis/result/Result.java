@@ -3,15 +3,15 @@ package preface.analysis.result;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import preface.parser.element.coreference.Entity;
 import preface.parser.element.text.AnnotatedWord;
 
 public class Result {
 
 	/**
-	 * Links between named entites
+	 * Links between named entities
+	 * EntityID => raw Frequency
 	 */
-	private HashMap<Entity, Integer> links;
+	private HashMap<Integer, Integer> links;
 	
 	/**
 	 * Chapter -> (word->frequency)
@@ -23,11 +23,11 @@ public class Result {
 		words = new HashMap<>();
 	}
 	
-	public void link(Entity e) {
-		if (links.containsKey(e)) {
-			links.put(e, links.get(e)+1);
+	public void link(int i) {
+		if (links.containsKey(i)) {
+			links.put(i, links.get(i)+1);
 		} else {
-			links.put(e, 1);
+			links.put(i, 1);
 		}
 	}
 
@@ -48,8 +48,8 @@ public class Result {
 	public String toString () {
 		StringBuilder sb = new StringBuilder("[Result]:\n");
 		sb.append("Links:\n");
-		for (Entry<Entity, Integer> link : links.entrySet()) {
-			sb.append(link.getKey().toString()).append("\t").append(link.getValue().intValue()).append("\n");
+		for (Entry<Integer, Integer> link : links.entrySet()) {
+			sb.append(link.getKey().intValue()).append("\t").append(link.getValue().intValue()).append("\n");
 		}
 		sb.append("\n\nChapters:\n");
 		for (Entry<Integer, FrequencyTable> e : words.entrySet()) {
