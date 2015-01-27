@@ -53,7 +53,7 @@ public class Parser {
 			Entity currEnt = null;		//enthält die entity (coreference) mentions werden per .add(mention) zu der entity hinzugefügt.
 			Mention currMen = null;
 			
-			InputStream	in = new FileInputStream("test.xml");
+			InputStream	in = new FileInputStream("UncleTomsCabin\\chapters\\extracted\\UncleTomsCabin_chapter1.xml");
 			XMLInputFactory factory = XMLInputFactory.newInstance();
 			XMLStreamReader parser = factory.createXMLStreamReader(in);
 			
