@@ -1,4 +1,5 @@
 package preface.parser;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -14,15 +15,17 @@ import preface.parser.element.coreference.Entity;
 import preface.parser.element.coreference.Mention;
 import preface.parser.element.text.Text;
 /**
- * Basic STaX parser for wrapping xml into java-classes
+ * Basic STaX parser for wrapping XML into java-classes
  * @author Julian
  *
  */
 public class Parser {
 
-	private List<Entity> entities;
+	private List<Entity> entities; //enthält eine Liste von entities (entity = liste von zusammengehörigen Mentions. Realisiert ist diese liste in entity.java
 	private Text text;
-	
+	private File dir = new File("data\\UncleTomsCabin\\chapters\\extracted"); 	//TODO Path should not be hardwired.
+	private File[] fileList = dir.listFiles();
+	private int ChptNr;
 	
 	public Parser () {
 		entities = new ArrayList<Entity>();
@@ -48,12 +51,11 @@ public class Parser {
 	}
 
 	public void parse() {
+		for (File f : fileList){
 		try {
-			List<Entity> entities= new ArrayList<Entity>(); //enthält eine Liste von entities (entity = liste von zusammengehörigen Mentions. Realisiert ist diese liste in entity.java
 			Entity currEnt = null;		//enthält die entity (coreference) mentions werden per .add(mention) zu der entity hinzugefügt.
 			Mention currMen = null;
-			
-			InputStream	in = new FileInputStream("test.xml");
+			InputStream	in = new FileInputStream(f);
 			XMLInputFactory factory = XMLInputFactory.newInstance();
 			XMLStreamReader parser = factory.createXMLStreamReader(in);
 			
@@ -68,10 +70,14 @@ public class Parser {
 					case XMLStreamConstants.START_ELEMENT:
 						switch(parser.getLocalName())
 						{
+							case "chapter":
+								ChptNr= Integer.parseInt(parser.getAttributeValue(0)); // Takes the capter ID from the XML file
+								
 							case "coreference":
 								currEnt = new Entity();
 								currEnt.setId(Integer.parseInt(parser.getAttributeValue(0))); // übernimmt die ID's aus <coreference id="xx">
-								break;
+								currEnt.setChapterNumber(ChptNr);
+							break;
 								
 							case "mention":
 								currMen = new Mention();
@@ -117,17 +123,24 @@ public class Parser {
 				}
 				parser.next();
 			}
-			//for (Mention m: currEnt){System.out.println(m.toString());}
-			for (Entity e: entities){System.out.println("Entities list: " + e.toString());}
-			
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (XMLStreamException e){
 			e.printStackTrace();
 		}
+		
+	}
 	}
 	
+	
 	public static void main(String args[]) {
-		new Parser().parse();
+		/**
+		 * Development only. Not used in the later process.
+		 * 
+		Parser p = new Parser();
+		p.parse();
+		List<Entity> entities = p.getEntities();
+		System.out.println(entities);
+		**/
 	}
 }
