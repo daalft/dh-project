@@ -11,9 +11,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import preface.parser.element.coreference.Entity;
-import preface.parser.element.coreference.Mention;
 import preface.parser.element.text.Text;
+import preface.parser.element.coreference.*;
 /**
  * Basic STaX parser for wrapping XML into java-classes
  * @author Julian
@@ -22,18 +21,25 @@ import preface.parser.element.text.Text;
 public class Parser {
 
 	private List<Entity> entities; //enthält eine Liste von entities (entity = liste von zusammengehörigen Mentions. Realisiert ist diese liste in entity.java
+	private List<Chain> chains;
 	private Text text;
 	private File dir = new File("data\\UncleTomsCabin\\chapters\\extracted"); 	//TODO Path should not be hardwired.
+	private File indexFile = new File("data\\coref_index.xml");
 	private File[] fileList = dir.listFiles();
 	private int ChptNr;
 	
 	public Parser () {
 		entities = new ArrayList<Entity>();
+		chains = new ArrayList<Chain>();
 		text = new Text();
 	}
 	
 	public List<Entity> getEntities () {
 		return entities;
+	}
+	
+	public List<Chain> getChains (){
+		return chains;
 	}
 	
 	public Text getText () {
@@ -43,6 +49,7 @@ public class Parser {
 	public void dispose () {
 		entities = null;
 		text = null;
+		chains = null;  //not sure if dispose should reset chains.
 		try {
 			this.finalize();
 		} catch (Throwable e) {
@@ -131,7 +138,67 @@ public class Parser {
 		
 	}
 	}
-	
+	public void parseIndex(){
+		try{
+			Chain currChn = null;
+			Entity currEnt = null;
+			InputStream	in = new FileInputStream(indexFile);
+			XMLInputFactory factory = XMLInputFactory.newInstance();
+			XMLStreamReader parser = factory.createXMLStreamReader(in);
+			
+			while(parser.hasNext()){
+				switch(parser.getEventType())
+				{
+					case XMLStreamConstants.END_DOCUMENT:
+						parser.close();
+					break;
+				
+					case XMLStreamConstants.START_ELEMENT:
+						switch(parser.getLocalName()){
+							case "chain":
+								currChn = new Chain();
+								currChn.setText(parser.getAttributeValue(0));
+							break;
+							case "coreference":
+								currEnt = new Entity();					
+							break;
+							case "id":
+								currEnt.setId(Integer.parseInt(parser.getElementText()));
+							break;
+							case "chapter":
+								currEnt.setChapterNumber(Integer.parseInt(parser.getElementText()));
+							break;
+							default:
+							break;
+						}
+					case XMLStreamConstants.END_ELEMENT:
+						switch(parser.getLocalName()){
+							case "chain":
+								chains.add(currChn);
+							break;
+							
+							case "coreference":
+								currChn.add(currEnt);
+							break;
+							default:
+							break;
+						}
+				break;	
+				}
+			parser.next();
+			}
+			
+			
+			
+			
+			
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+		catch(XMLStreamException e){
+			e.printStackTrace();
+		}
+	}
 	
 	public static void main(String args[]) {
 		/**
@@ -141,6 +208,12 @@ public class Parser {
 		p.parse();
 		List<Entity> entities = p.getEntities();
 		System.out.println(entities);
+		**/
+		/**
+		Parser p = new Parser();
+		p.parseIndex();
+		List<Chain> chains = p.getChains();
+		System.out.println(chains);
 		**/
 	}
 }
