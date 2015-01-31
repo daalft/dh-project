@@ -23,11 +23,9 @@ public class Parser {
 	private List<Entity> entities; //enthält eine Liste von entities (entity = liste von zusammengehörigen Mentions. Realisiert ist diese liste in entity.java
 	private List<Chain> chains;
 	private Text text;
-	private File dir = new File("data\\UncleTomsCabin\\chapters\\extracted"); 	//TODO Path should not be hardwired.
-	private File indexFile = new File("data\\coref_index.xml");
-	private File[] fileList = dir.listFiles();
-	private int ChptNr;
-	
+	//private File dir = new File("data\\UncleTomsCabin\\chapters\\extracted"); 	//TODO Path should not be hardwired.
+	//private File indexFile = new File("data\\coref_index.xml");
+
 	public Parser () {
 		entities = new ArrayList<Entity>();
 		chains = new ArrayList<Chain>();
@@ -57,7 +55,9 @@ public class Parser {
 		}
 	}
 
-	public void parse() {
+	public void parse(File dir) {
+		File[] fileList = dir.listFiles();
+		int ChptNr = 0;
 		for (File f : fileList){
 		try {
 			Entity currEnt = null;		//enthält die entity (coreference) mentions werden per .add(mention) zu der entity hinzugefügt.
@@ -78,7 +78,7 @@ public class Parser {
 						switch(parser.getLocalName())
 						{
 							case "chapter":
-								ChptNr= Integer.parseInt(parser.getAttributeValue(0)); // Takes the capter ID from the XML file
+								ChptNr= Integer.parseInt(parser.getAttributeValue(0)); // Takes the chapter ID from the XML file
 								
 							case "coreference":
 								currEnt = new Entity();
@@ -138,7 +138,7 @@ public class Parser {
 		
 	}
 	}
-	public void parseIndex(){
+	public void parseIndex(File indexFile){
 		try{
 			Chain currChn = null;
 			Entity currEnt = null;
@@ -203,17 +203,18 @@ public class Parser {
 	public static void main(String args[]) {
 		/**
 		 * Development only. Not used in the later process.
-		 * 
+		 *
+		File dir = new File("data\\UncleTomsCabin\\chapters\\extracted");
 		Parser p = new Parser();
-		p.parse();
+		p.parse(dir);
 		List<Entity> entities = p.getEntities();
 		System.out.println(entities);
 		**/
-		/**
+		
 		Parser p = new Parser();
-		p.parseIndex();
+		p.parseIndex(new File("data\\coref_index.xml"));
 		List<Chain> chains = p.getChains();
 		System.out.println(chains);
-		**/
+		
 	}
 }
