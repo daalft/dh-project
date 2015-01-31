@@ -11,41 +11,45 @@ import java.util.ArrayList;
  * @author Julian
  *	Class holds all information about the index files for a book.
  */
-public class Chain {
-	private String text;
-	private List<Entity> entities;
-
+public class Chain implements Iterable<EntityReference> {
 	
+	private String text;
+	private List<EntityReference> entityRefs;
 
 	public Chain() {
-		entities = new ArrayList<Entity>();
+		entityRefs = new ArrayList<EntityReference>();
 	}
-	public void add(Entity arg0) {
-		entities.add(arg0);
+	
+	public void add(EntityReference ref) {
+		entityRefs.add(ref);
 	}
-	public Entity get(int arg0) {
-		return entities.get(arg0);
+	
+	public EntityReference get(int index) {
+		return entityRefs.get(index);
 	}
-	public Iterator<Entity> iterator() {
-		return entities.iterator();
+	
+	public Iterator<EntityReference> iterator() {
+		return entityRefs.iterator();
 	}
 
 	public String getText() {
 		return text;
 	}
+	
 	public void setText(String text) {
 		this.text = text;
 	}
-	public List<Entity> getEntities() {
-		return entities;
+	
+	public List<EntityReference> getEntityReferences() {
+		return entityRefs;
 	}
-	public void setEntities(List<Entity> entities) {
-		this.entities = entities;
+	
+	public void setEntityReferences(List<EntityReference> entityRefs) {
+		this.entityRefs = entityRefs;
 	}
+	
 	@Override
 	public String toString() {
-		return "Chain [text=" + text + ", entities=" + entities + "]";
+		return "Chain [text=" + text + ", entities=" + entityRefs + "]";
 	}
-	
-	
 }

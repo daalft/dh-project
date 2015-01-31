@@ -20,7 +20,7 @@ import preface.parser.element.coreference.*;
  */
 public class Parser {
 
-	private List<Entity> entities; //enthält eine Liste von entities (entity = liste von zusammengehörigen Mentions. Realisiert ist diese liste in entity.java
+	private List<Entity> entities; //enthï¿½lt eine Liste von entities (entity = liste von zusammengehï¿½rigen Mentions. Realisiert ist diese liste in entity.java
 	private List<Chain> chains;
 	private Text text;
 	//private File dir = new File("data\\UncleTomsCabin\\chapters\\extracted"); 	//TODO Path should not be hardwired.
@@ -57,10 +57,10 @@ public class Parser {
 
 	public void parse(File dir) {
 		File[] fileList = dir.listFiles();
-		int ChptNr = 0;
+		int chptNr = 0;
 		for (File f : fileList){
 		try {
-			Entity currEnt = null;		//enthält die entity (coreference) mentions werden per .add(mention) zu der entity hinzugefügt.
+			Entity currEnt = null;		//enthï¿½lt die entity (coreference) mentions werden per .add(mention) zu der entity hinzugefï¿½gt.
 			Mention currMen = null;
 			InputStream	in = new FileInputStream(f);
 			XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -78,12 +78,12 @@ public class Parser {
 						switch(parser.getLocalName())
 						{
 							case "chapter":
-								ChptNr= Integer.parseInt(parser.getAttributeValue(0)); // Takes the chapter ID from the XML file
+								chptNr= Integer.parseInt(parser.getAttributeValue(0)); // Takes the chapter ID from the XML file
 								
 							case "coreference":
 								currEnt = new Entity();
-								currEnt.setId(Integer.parseInt(parser.getAttributeValue(0))); // übernimmt die ID's aus <coreference id="xx">
-								currEnt.setChapterNumber(ChptNr);
+								currEnt.setId(Integer.parseInt(parser.getAttributeValue(0))); // ï¿½bernimmt die ID's aus <coreference id="xx">
+								currEnt.setChapterNumber(chptNr);
 							break;
 								
 							case "mention":
@@ -116,7 +116,7 @@ public class Parser {
 						switch (parser.getLocalName())
 						{
 							case "coreference":
-								entities.add(currEnt); //fügt currEnt der Liste der entities hinzu
+								entities.add(currEnt); //fï¿½gt currEnt der Liste der entities hinzu
 							break;
 							
 							case "mention":
@@ -141,7 +141,7 @@ public class Parser {
 	public void parseIndex(File indexFile){
 		try{
 			Chain currChn = null;
-			Entity currEnt = null;
+			EntityReference currRef = null;
 			InputStream	in = new FileInputStream(indexFile);
 			XMLInputFactory factory = XMLInputFactory.newInstance();
 			XMLStreamReader parser = factory.createXMLStreamReader(in);
@@ -160,13 +160,13 @@ public class Parser {
 								currChn.setText(parser.getAttributeValue(0));
 							break;
 							case "coreference":
-								currEnt = new Entity();					
+								currRef = new EntityReference();					
 							break;
 							case "id":
-								currEnt.setId(Integer.parseInt(parser.getElementText()));
+								currRef.setId(Integer.parseInt(parser.getElementText()));
 							break;
 							case "chapter":
-								currEnt.setChapterNumber(Integer.parseInt(parser.getElementText()));
+								currRef.setChapterNumber(Integer.parseInt(parser.getElementText()));
 							break;
 							default:
 							break;
@@ -178,7 +178,7 @@ public class Parser {
 							break;
 							
 							case "coreference":
-								currChn.add(currEnt);
+								currChn.add(currRef);
 							break;
 							default:
 							break;
