@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import preface.analysis.result.Result;
 import preface.analysis.util.StopWords;
 import preface.parser.Parser;
+import preface.parser.element.coreference.Chain;
 import preface.parser.element.coreference.Entity;
 import preface.parser.element.coreference.Mention;
 import preface.parser.element.text.AnnotatedWord;
@@ -45,11 +46,13 @@ public class Preface {
 		searchWindow = i;
 	}
 
-	public void run () {
+	public void run (File dir, File index) {
 
 		Parser p = new Parser();
-		p.parse();
+		p.parse(dir);
+		p.parseIndex(index);
 		List<Entity> entities = p.getEntities();
+		List<Chain> chains = p.getChains();
 		Text text = p.getText();
 		p.dispose();
 
@@ -124,9 +127,16 @@ public class Preface {
 	}
 
 	public static void main(String[] args) {
+		if (args.length < 2) {
+			System.err.println("Wrong number of arguments! Expected 2, got " + args.length);
+			System.err.println("Please indicate directory containing text files and path to index file.");
+			System.exit(0);
+		}
 		Preface preface = new Preface();
 		preface.setUseStopwords(true);
 		preface.setSearchWindow(3);
-		preface.run();
+		File dir = new File(args[0]);
+		File index = new File(args[1]);
+		preface.run(dir, index);
 	}
 }
