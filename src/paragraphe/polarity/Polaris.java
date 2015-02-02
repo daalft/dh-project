@@ -7,7 +7,7 @@ import java.io.*;
 
 public class Polaris {
 
-	private byte debug = 10;
+	private byte debug = 0;
 	private HashMap<String, Double> map;
 	
 	public Polaris () {
@@ -33,8 +33,6 @@ public class Polaris {
 					d = Double.parseDouble(sp[1]);
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
-					br.close();
 				}
 				map.put(sp[0], d);
 			}
@@ -58,6 +56,7 @@ public class Polaris {
 		double currentPolarity = 0;
 		if (map.get(w)!=null) {
 			currentPolarity = map.get(w);
+			System.out.println("polarity " + w + " " + currentPolarity);
 		} else { 
 			if (debug > 9)
 				System.err.println("Premature return. No annotation of " + w);
