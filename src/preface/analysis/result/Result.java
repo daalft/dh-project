@@ -63,4 +63,14 @@ public class Result {
 	public HashMap<Integer, Integer> getLinks () {
 		return links;
 	}
+
+	public String toJSON() {
+		StringBuilder sb = new StringBuilder();
+		for (Entry<Integer, FrequencyTable> e : words.entrySet()) {
+			sb.append("{\"chapter\":").append(e.getKey().intValue()).append(",\"children\":[");
+			sb.append(e.getValue().toJSON()).append("]},");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		return sb.toString();
+	}
 }
