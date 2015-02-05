@@ -56,7 +56,6 @@ public class Polaris {
 		double currentPolarity = 0;
 		if (map.get(w)!=null) {
 			currentPolarity = map.get(w);
-			System.out.println("polarity " + w + " " + currentPolarity);
 		} else { 
 			if (debug > 9)
 				System.err.println("Premature return. No annotation of " + w);
