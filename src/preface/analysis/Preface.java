@@ -1,19 +1,22 @@
 package preface.analysis;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import paragraphe.polarity.Polaris;
 import preface.analysis.result.Result;
+import preface.analysis.util.ManaCore;
 import preface.analysis.util.StopWords;
 import preface.parser.Parser;
+import preface.parser.element.coreference.BookEntity;
 import preface.parser.element.coreference.Chain;
 import preface.parser.element.coreference.Entity;
 import preface.parser.element.coreference.Mention;
 import preface.parser.element.text.AnnotatedWord;
 import preface.parser.element.text.Chapter;
-import preface.parser.element.text.Paragraph;
 import preface.parser.element.text.Sentence;
 import preface.parser.element.text.Text;
 
@@ -26,7 +29,7 @@ public class Preface {
 
 	//private boolean bagOfWords;
 	private int searchWindow = -1;
-	private HashMap<Entity, Result> map;
+	private HashMap<BookEntity, Result> map;
 	private boolean stopWords;
 
 	public Preface () {
@@ -47,28 +50,79 @@ public class Preface {
 	}
 
 	public void run (File dir, File index) {
-
+		// parser block
+		System.out.println("Parsing");
 		Parser p = new Parser();
 		p.parse(dir);
 		p.parseIndex(index);
-		List<Entity> entities = p.getEntities();
+		List<Entity> chapterEntities = p.getEntities();
 		List<Chain> chains = p.getChains();
 		Text text = p.getText();
+		Collections.sort(text.getChapters());
 		p.dispose();
-
+		// end parser block
+		
 		StopWords stop = new StopWords();
-
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			Result r = new Result();
+		
+		// NE Type resolution
+		System.out.println("NETYPE resolution");
+		for (Entity e : chapterEntities) {
+			int chapter = e.getChapterNumber();
 			for (Mention m : e) {
-				// find content in context based on parameters
-				int leftLimit = m.getWordNumberStart();
-				int rightLimit = m.getWordNumberEnd();
-				for (Chapter chapter : text) {
-					for (Paragraph para : chapter) {
-						Sentence s = para.getSentence(m.getOccursInSentenceNum()-1);
+				int sentence = m.getOccursInSentenceNum();
+				int head = m.getWordNumberHead();
+				Chapter c = text.getChapter(chapter);
+				e.setType(c.getSentence(sentence).getWord(head).getType());
+			}
+		}
+		
+		// MANACORE
+		System.out.println("MANACORE start");
+		ManaCore mc = new ManaCore(chapterEntities, chains);
+		mc.correlate();
+		String links = "";
+		try {
+			links = mc.networkLinksToJSONString();
+			// TODO remove
+			mc.oldNetworkJSON();
+			mc.allPersons();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		List<BookEntity> entities = mc.getBookEntities();
+
+		// POLARIS
+		Polaris polaris = new Polaris();
+		System.out.println("Preface go");
+		
+		// Preface proper
+		for (int i = 0; i < entities.size(); i++) {
+			// fetch entities
+			BookEntity e = entities.get(i);
+			// init result
+			Result r = new Result();
+			// iterate over entity map -> chapter - mentions
+			for (Entry<Integer, List<Mention>> entry : e.getMap().entrySet()) {
+				// get chapter number
+				int chapterNumber = entry.getKey().intValue();
+				// get mentions
+				List<Mention> list = entry.getValue();
+				// for each mention
+				for (Mention m : list) {
+					// set left and right limit for search window
+					int leftLimit = m.getWordNumberStart();
+					int rightLimit = m.getWordNumberEnd();
+					// fetch correct chapter from text
+					Chapter chapter = text.getChapter(chapterNumber);
+					// double check: entity occurs in chapter?
+					if (mc.occursInChapter(e, chapterNumber)) {
+						// get sentence with mention in it
+						Sentence s = chapter.getSentence(m.getOccursInSentenceNum());
+						// for each word in sentence
 						for (AnnotatedWord w : s) {
+							// stop word filtering
 							if (stopWords) {
 								if (stop.isStopword(w.getLemma()))
 									continue;
@@ -82,47 +136,43 @@ public class Preface {
 								if (w.getId() > (rightLimit + searchWindow))
 									break;
 							}
-							if (w.getPOS().matches("NN\\w?") || 
+							// if we have a noun, verb or adjective
+							if (w.getPOS().matches("NN[^P]?") || 
 									w.getPOS().matches("VB\\w?") ||
 									w.getPOS().equals("JJ\\w?")) { 
-								r.add(w, chapter.getChapterNumber());
+								// annotate with POLARIS and add to result
+								r.add(polaris.annotate(w), chapter.getChapterNumber());
 							}
-						}
-					}				
-				}
-			}
-			// network linking
-			for (Mention m1 : e) {
-				for (int j = i+1; j < entities.size(); j++) {
-					Entity e2 = entities.get(j);
-					for (Mention m2 : e2) {
-						if (m1.getOccursInSentenceNum() == m2.getOccursInSentenceNum()) {
-							r.link(e2.getId());
 						}
 					}
 				}
 			}
-			if (!r.isEmpty())
+			//if (!r.isEmpty())
 				map.put(e, r);
 		}
+		System.out.println("Done");
 		try {
-			write(map);
+			write(map, links);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
-	private void write(HashMap<Entity, Result> map) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("testoutputstops2.txt")));
-		for (Entry<Entity, Result> e : map.entrySet()) {
-			Entity currEnt = e.getKey();
+	private void write(HashMap<BookEntity, Result> map2, String links) throws IOException {
+		StringBuilder sb = new StringBuilder("{\"nodes\":[");
+		
+		for (Entry<BookEntity, Result> e : map2.entrySet()) {
+			BookEntity currEnt = e.getKey();
 			Result currRes = e.getValue();
-			bw.write(currEnt.toString());
-			bw.write(currRes.toString());
-			bw.newLine();
-			bw.newLine();
+			sb.append("{").append(currEnt.toJSON()).append(",\n\"children\":[");
+			sb.append(currRes.toJSON());
+			sb.append("]},");
 		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append("],").append(links).append("}");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("testoutallcharq.txt")));
+		bw.write(sb.toString());
 		bw.close();
 	}
 
