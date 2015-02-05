@@ -7,9 +7,18 @@ import java.io.*;
 
 public class Polaris {
 
-	private byte debug = 10;
+	/**
+	 * Debug level
+	 */
+	private byte debugLevel = 10;
+	/**
+	 * Polarity map
+	 */
 	private HashMap<String, Double> map;
 	
+	/**
+	 * Constructor
+	 */
 	public Polaris () {
 		map = new HashMap<>();
 		try {
@@ -19,8 +28,14 @@ public class Polaris {
 		}
 	}
 	
+	/**
+	 * Initializer
+	 * <p>
+	 * Loads the default polarity file (./data/polarity.pi)
+	 * @throws IOException
+	 */
 	private void initialize () throws IOException {
-		if (debug > 5)
+		if (debugLevel > 5)
 			System.err.println("Loading Polaris...");
 		File defaultFile = new File("./data/polarity.pi");
 		if (defaultFile.canRead()) {
@@ -44,12 +59,18 @@ public class Polaris {
 			// either file does not exist or is not readable
 			System.err.println("Default polarity file could not be opened!");
 		}
-		if (debug > 5)
+		if (debugLevel > 5)
 			System.err.println("Finished loading Polaris.");
 	}
 	
+	/**
+	 * Annotates a word
+	 * 
+	 * @param word word to annotate
+	 * @return word with annotation
+	 */
 	public <T extends Polariseable> T annotate (T word) {
-		if (debug > 7)
+		if (debugLevel > 7)
 			System.err.println("Starting annotation of " + word.getString());
 		String w = word.getString();
 		double previousPolarity = 0;
@@ -59,7 +80,7 @@ public class Polaris {
 		if (map.get(w)!=null) {
 			currentPolarity = map.get(w);
 		} else { 
-			if (debug > 9)
+			if (debugLevel > 9)
 				System.err.println("Premature return. No annotation of " + w);
 			// premature return:
 			// we do not have the word in the word list

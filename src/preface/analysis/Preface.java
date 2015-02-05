@@ -24,8 +24,17 @@ import preface.parser.element.text.Text;
 public class Preface {
 
 	//private boolean bagOfWords;
+	/**
+	 * Search window width or -1 for unrestricted
+	 */
 	private int searchWindow = -1;
+	/**
+	 * Map 
+	 */
 	private HashMap<Entity, Result> map;
+	/**
+	 * Flag for stopwords
+	 */
 	private boolean stopWords;
 
 	public Preface () {
