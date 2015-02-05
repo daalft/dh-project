@@ -87,8 +87,8 @@ public class Preface {
 		try {
 			links = mc.networkLinksToJSONString();
 			// TODO remove
-			mc.oldNetworkJSON();
-			mc.allPersons();
+//			mc.oldNetworkJSON();
+//			mc.allPersons();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -150,7 +150,12 @@ public class Preface {
 					}
 				}
 			}
-			//if (!r.isEmpty())
+			if (r.isEmpty()) {
+				if (mc.requiredEntities().contains(e.getUniqueID())) {
+					map.put(e,r);
+					//System.err.println("Adding required entity " + e.getUniqueID());
+				}
+			} else
 				map.put(e, r);
 		}
 		System.out.println("Done");
@@ -174,7 +179,7 @@ public class Preface {
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("],").append(links).append("}");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("testoutallcharq.txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("network5.json")));
 		bw.write(sb.toString());
 		bw.close();
 	}

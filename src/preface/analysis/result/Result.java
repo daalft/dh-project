@@ -42,6 +42,8 @@ public class Result {
 	}
 
 	public String toJSON() {
+		if (isEmpty()) return "";
+		
 		StringBuilder sb = new StringBuilder();
 		for (Entry<Integer, FrequencyTable> e : words.entrySet()) {
 			sb.append("{\"chapter\":").append(e.getKey().intValue()).append(",\"children\":[");
