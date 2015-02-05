@@ -32,7 +32,8 @@ public class Sentence implements Iterable<AnnotatedWord> {
 	}
 	
 	public AnnotatedWord getWord (int position) {
-		return words.get(position);
+		// Position is 1-indexed, word list is zero-indexed
+		return words.get(position-1);
 	}
 	
 	public List<AnnotatedWord> getWords () {
@@ -45,5 +46,10 @@ public class Sentence implements Iterable<AnnotatedWord> {
 	
 	public void setSentenceNumber (int n) {
 		sentenceNumber = n;
+	}
+	
+	@Override
+	public String toString() {
+		return "[sentence num:" + sentenceNumber + "] " + words.toString();
 	}
 }
