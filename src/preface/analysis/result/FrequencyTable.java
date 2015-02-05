@@ -28,4 +28,13 @@ public class FrequencyTable {
 		}
 		return sb.toString();
 	}
+
+	public String toJSON() {
+		StringBuilder sb = new StringBuilder();
+		for (Entry<AnnotatedWord, Integer> e : map.entrySet()) {
+			sb.append("{").append(e.getKey().toJSON()).append(",\n\"frequency\":").append(e.getValue().intValue()).append("},\n");
+		}
+		sb.deleteCharAt(sb.length()-2);
+		return sb.toString();
+	}
 }

@@ -8,38 +8,46 @@ import java.util.List;
  * @author s2daalft
  *
  */
-public class Chapter implements Iterable<Paragraph> {
+public class Chapter implements Iterable<Sentence>, Comparable<Chapter> {
 
-	private List<Paragraph> paragraphs;
+	private List<Sentence> sentences;
 	private int chapterNumber;
 
 	public Chapter() {
-		paragraphs = new ArrayList<>();
+		sentences = new ArrayList<>();
 	}
 	
 	@Override
-	public Iterator<Paragraph> iterator() {
-		return paragraphs.iterator();
+	public Iterator<Sentence> iterator() {
+		return sentences.iterator();
 	}
 	
 	public int getChapterNumber () {
 		return chapterNumber;
 	}
 
-	public List<Paragraph> getParagraphs () {
-		return paragraphs;
-	}
-	
-	@Override
-	public String toString () {
-		return "Chapter " + chapterNumber;
-	}
-
 	public void setChapterNumber(int i) {
 		chapterNumber = i;
 	}
+
+	public Sentence getSentence (int position) {
+		return sentences.get(position-1);
+	}
 	
-	public void addParagraph (Paragraph p) {
-		paragraphs.add(p);
+	public List<Sentence> getSentences () {
+		return sentences;
+	}
+	
+	public void add(Sentence s) {
+		sentences.add(s);
+	}
+
+	@Override
+	public int compareTo(Chapter o) {
+		if (this.chapterNumber > o.chapterNumber)
+			return 1;
+		if (this.chapterNumber < o.chapterNumber)
+			return -1;
+		return 0;
 	}
 }

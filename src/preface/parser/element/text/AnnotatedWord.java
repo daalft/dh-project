@@ -93,4 +93,45 @@ public class AnnotatedWord implements Polariseable {
 			sb.append("Polarity: ").append(polarity).append("\n");
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((lemma == null) ? 0 : lemma.hashCode());
+		result = prime * result + ((pos == null) ? 0 : pos.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AnnotatedWord other = (AnnotatedWord) obj;
+		if (lemma == null) {
+			if (other.lemma != null)
+				return false;
+		} else if (!lemma.equals(other.lemma))
+			if (!lemma.toLowerCase().equals(other.lemma.toLowerCase()))
+				return false;
+			else
+				return true;
+		if (pos == null) {
+			if (other.pos != null)
+				return false;
+		} else if (!pos.equals(other.pos))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+
+	public String toJSON() {
+		return "\"lemma\":\""+lemma+"\",\n\"pos\":\""+pos+"\",\n\"type\":\""+type.toString()+(isPolarized()?"\",\n\"polarity\":"+polarity:"\"");
+	}
 }

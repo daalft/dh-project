@@ -25,4 +25,12 @@ public class Text implements Iterable<Chapter> {
 		return chapters;
 	}
 	
+	public Chapter getChapter (int chapter) {
+		// Chapter is 1-indexed, chapter list is zero-indexed
+		return chapters.get(chapter-1);
+	}
+
+	public void add(Chapter chapter) {
+		chapters.add(chapter);
+	}
 }

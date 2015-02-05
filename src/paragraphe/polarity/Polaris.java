@@ -7,10 +7,11 @@ import java.io.*;
 
 public class Polaris {
 
+
 	/**
 	 * Debug level
 	 */
-	private byte debugLevel = 10;
+	private byte debugLevel = 0;
 	/**
 	 * Polarity map
 	 */
@@ -48,8 +49,6 @@ public class Polaris {
 					d = Double.parseDouble(sp[1]);
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
-					br.close();
 				}
 				map.put(sp[0], d);
 			}
