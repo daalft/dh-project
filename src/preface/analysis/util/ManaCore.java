@@ -73,8 +73,10 @@ public class ManaCore {
 			if (mention.isEmpty())
 				continue;
 			StopWords sw = new StopWords();
-			if (sw.isStopword(mention.toLowerCase()))
-				continue;
+			// TODO merge entities!
+			// if starts with stop word!
+//			if (sw.isStopword(mention.split(" ")[0].toLowerCase()))
+//				continue;
 			for (EntityReference ref : chain.getEntityReferences()) {
 				Entity e = lookup(ref);
 				if (e.getType().equals(NEType.PERSON)) {
@@ -121,7 +123,7 @@ public class ManaCore {
 	private String extractName(String text) {
 		// there are a lot of recurrent names with slight variation
 		// => too many nodes in the graph!
-		Pattern name = Pattern.compile("([\\s\\w.]+)");
+		Pattern name = Pattern.compile("(([A-Z][\\w]+)(\\w+\\.?\\s?){0,5}([A-Z][\\w]+))");
 		Matcher m = name.matcher(text);
 		if (m.find()) {
 			return m.group().trim();
@@ -213,33 +215,6 @@ public class ManaCore {
 	}
 
 	public String networkLinksToJSONString () throws IOException {
-		//		StringBuilder sb = new StringBuilder("{\"nodes\":[");
-
-		//		HashSet<Doublet<String, Integer>> unique = new HashSet<>();
-		//		
-		//		for (Entry<Doublet<Integer, Integer>, Integer> e : entityNetwork.entrySet()) {
-		//			Doublet<Integer, Integer> d = e.getKey();
-		//			BookEntity be1 = bookEntities.get(d.getValue1());
-		//			BookEntity be2 = bookEntities.get(d.getValue2());
-		//			unique.add(new Doublet<String, Integer>(be1.getRepresentativeMention(), be1.getUniqueID()));
-		//			unique.add(new Doublet<String, Integer>(be2.getRepresentativeMention(), be2.getUniqueID()));
-		//		}
-		//		
-		//		for (Doublet<String, Integer> e : unique) {
-		//			sb.append("{");
-		//			sb.append("\"name\":\"").append(e.value1).append("\"");
-		//			sb.append(",\"id\":").append(e.value2);
-		//			sb.append("},");
-		//		}
-
-		//		for (BookEntity be : bookEntities) {
-		//			sb.append("{\"name\":\"").append(be.getRepresentativeMention()).append("\",\"id\":");
-		//			sb.append(be.getUniqueID()).append("},");
-		//		}
-
-		//		sb.deleteCharAt(sb.length()-1);
-		//		sb.append("],\"links\":[");
-
 		StringBuilder sb = new StringBuilder("\"links\":[");
 		for (Entry<Doublet<Integer, Integer>, Integer> e : entityNetwork.entrySet()) {
 			Doublet<Integer, Integer> d = e.getKey();
@@ -249,60 +224,6 @@ public class ManaCore {
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("]");
 		return sb.toString();
-	}
-
-	public String oldNetworkJSON () throws IOException {
-				StringBuilder sb = new StringBuilder("{\"nodes\":[");
-
-//				HashSet<Doublet<String, Integer>> unique = new HashSet<>();
-//				
-//				for (Entry<Doublet<Integer, Integer>, Integer> e : entityNetwork.entrySet()) {
-//					Doublet<Integer, Integer> d = e.getKey();
-//					BookEntity be1 = bookEntities.get(d.getValue1());
-//					BookEntity be2 = bookEntities.get(d.getValue2());
-//					unique.add(new Doublet<String, Integer>(be1.getRepresentativeMention(), be1.getUniqueID()));
-//					unique.add(new Doublet<String, Integer>(be2.getRepresentativeMention(), be2.getUniqueID()));
-//				}
-//				
-//				for (Doublet<String, Integer> e : unique) {
-//					sb.append("{");
-//					sb.append("\"name\":\"").append(e.value1).append("\"");
-//					sb.append(",\"id\":").append(e.value2);
-//					sb.append("},");
-//				}
-
-				for (BookEntity be : bookEntities) {
-					sb.append("{\"name\":\"").append(be.getRepresentativeMention()).append("\",\"id\":");
-					sb.append(be.getUniqueID()).append("},");
-				}
-
-				sb.deleteCharAt(sb.length()-1);
-				sb.append("],\"links\":[");
-
-//		StringBuilder sb = new StringBuilder("\"links\":[");
-		for (Entry<Doublet<Integer, Integer>, Integer> e : entityNetwork.entrySet()) {
-			Doublet<Integer, Integer> d = e.getKey();
-			int frequency = e.getValue().intValue();
-			sb.append("{\"source\":" + d.getValue1()).append(",\"target\":").append(d.getValue2()).append(",\"value\":"+frequency+"},");
-		}
-		sb.deleteCharAt(sb.length()-1);
-		sb.append("]}");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("network_v5test.json")));
-		bw.write(sb.toString());
-		bw.close();
-		return sb.toString();
-	}
-	
-	public void allPersons () throws IOException {
-		StringBuilder sb = new StringBuilder();
-		for (BookEntity be : bookEntities) {
-			sb.append("{\"name\":\"").append(be.getRepresentativeMention()).append("\",\"id\":");
-			sb.append(be.getUniqueID()).append("},");
-		}
-		sb.deleteCharAt(sb.length()-1);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("allchar.json")));
-		bw.write(sb.toString());
-		bw.close();
 	}
 	
 	class Doublet<T1, T2> {
@@ -370,5 +291,14 @@ public class ManaCore {
 
 	public List<BookEntity> getBookEntities() {
 		return bookEntities;
+	}
+
+	public Set<Integer> requiredEntities() {
+		Set<Integer> required = new HashSet<Integer>();
+		for (Doublet<Integer, Integer> d : entityNetwork.keySet()) {
+			required.add(d.getValue1());
+			required.add(d.getValue2());
+		}
+		return required;
 	}
 }
