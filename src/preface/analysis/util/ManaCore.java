@@ -33,6 +33,7 @@ public class ManaCore {
 	private List<BookEntity> bookEntities;
 	private Map<BookEntity, List<Integer>> entityChapterMap;
 	private Map<Doublet<Integer, Integer>, Integer> entityNetwork;
+	private boolean limitToPerson;
 
 	public ManaCore() {
 		chains = new ArrayList<>();
@@ -68,40 +69,62 @@ public class ManaCore {
 	}
 
 	private boolean buildBookEntities () {
-		for (Chain chain : chains) {
+		for (Chain chain : chains) {		
 			String mention = extractName(chain.getText());
 			if (mention.isEmpty())
 				continue;
-			StopWords sw = new StopWords();
+			
 			// TODO merge entities!
-			// if starts with stop word!
-//			if (sw.isStopword(mention.split(" ")[0].toLowerCase()))
-//				continue;
+
 			for (EntityReference ref : chain.getEntityReferences()) {
 				Entity e = lookup(ref);
-				if (e.getType().equals(NEType.PERSON)) {
+				
 					BookEntity be = null;
 					boolean exists = exists(mention);
-					if (exists) {
-						//System.err.println(mention);
-						//System.err.println(bookEntities);
+					if (exists) { // direct match 
 						be = getEntityByMention(mention);
 					} else {
+						// merge with entity
+						if (fuzzyExist(mention)) {
+							// TODO not implemented
+						}
+						// create new entity
+						else {
 						be = new BookEntity();
 						be.setRepresentativeMention(mention);
+						}
 					}
 					for (Mention m : e) {
+						
 						int chapNum = ref.getChapterNumber();
+						
 						be.map(chapNum, m);
 						be.setType(e.getType());
 					}
 					if (!exists) {
 						bookEntities.add(be);
 					}
-				}
+				
 			}
 		}
 		return true;
+	}
+
+	private boolean fuzzyExist(String mention) {
+		for (BookEntity be : bookEntities) {
+			for (Entry<Integer, List<Mention>> e : be.getMap().entrySet()) {
+				e.getKey();
+				List<Mention> mentions = e.getValue();
+				for (Mention m : mentions) {
+					// TODO implement
+					if (m.getTextMention().matches("")) {
+						// return true;
+						return false;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private BookEntity getEntityByMention(String mention) {
@@ -123,12 +146,11 @@ public class ManaCore {
 	private String extractName(String text) {
 		// there are a lot of recurrent names with slight variation
 		// => too many nodes in the graph!
-		Pattern name = Pattern.compile("(([A-Z][\\w]+)(\\w+\\.?\\s?){0,5}([A-Z][\\w]+))");
+		Pattern name = Pattern.compile("(([A-Z][a-z]+)([A-Za-z]+\\.?\\s?){0,4}([A-Z][a-z]+))");
 		Matcher m = name.matcher(text);
 		if (m.find()) {
 			return m.group().trim();
 		}
-		//System.err.println("No name found in String " + text);
 		return "";
 	}
 
@@ -165,22 +187,26 @@ public class ManaCore {
 
 		for (int i = 0; i < bookEntities.size(); i++) {
 			BookEntity be = bookEntities.get(i);
-			if (!be.getType().equals(NEType.PERSON))
-				continue;
+			if (limitToPerson)
+				if (!be.getType().equals(NEType.PERSON))
+					continue;	
 			for (Entry<Integer, List<Mention>> entry : be.getMap().entrySet()) {
 				int chapter = entry.getKey().intValue();
 				List<Mention> mentions = entry.getValue();
 				for (Mention m : mentions) {
 					for (int j = i+1; j < bookEntities.size(); j++) {
 						BookEntity bf = bookEntities.get(j);
-						if (!bf.getType().equals(NEType.PERSON))
-							continue;
+						if (limitToPerson)
+							if (!bf.getType().equals(NEType.PERSON))
+								continue;
 						List<Mention> list = bf.getMentionsByChapter(chapter);
 						if (list == null) {
 							continue;
 						} 
 						for (Mention m2 : list) {
-							if (m.getOccursInSentenceNum() == m2.getOccursInSentenceNum()) {
+							if (m.getOccursInSentenceNum() == m2.getOccursInSentenceNum()
+									// TODO also link if in previous or next sentence?
+									) {
 								int beuid = be.getUniqueID();
 								int bfuid = bf.getUniqueID();
 								if (beuid == bfuid) {
