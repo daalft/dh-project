@@ -81,12 +81,12 @@ public class BookEntity {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[").append(representativeMention).append("]\n");
-//		for (Entry<Integer, List<Mention>> e : map.entrySet()) {
-//			sb.append("\tChapter " + e.getKey() + "\n");
-//			for (Mention m : e.getValue())
-//				sb.append("\t\t").append(m).append("\n");
-//			
-//		}
+		for (Entry<Integer, List<Mention>> e : map.entrySet()) {
+			sb.append("\tChapter " + e.getKey() + "\n");
+			for (Mention m : e.getValue())
+				sb.append("\t\t").append(m).append("\n");
+			
+		}
 		sb.append("\n");
 		return sb.toString();
 	}
