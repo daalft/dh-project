@@ -9,4 +9,7 @@ package paragraphe;
  */
 public class Paragraphe {
 
+	/**
+	 * Paragraphe has been implemented in JS
+	 */
 }
