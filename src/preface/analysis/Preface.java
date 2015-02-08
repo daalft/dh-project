@@ -39,7 +39,7 @@ public class Preface {
 	private HashMap<BookEntity, Result> map;
 	private boolean stopWords;
 	private int cloudWordNumber = 100;
-	private String outputdir = "./";
+	private String outputdir = "./visual/";
 
 	public Preface () {
 		map = new HashMap<>();
