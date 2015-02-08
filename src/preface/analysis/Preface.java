@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import paragraphe.polarity.Polaris;
 import preface.analysis.result.Result;
-import preface.analysis.util.ManaCore;
 import preface.analysis.util.StopWords;
 import preface.parser.Parser;
 import preface.parser.element.coreference.BookEntity;

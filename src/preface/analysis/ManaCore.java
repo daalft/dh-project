@@ -1,4 +1,4 @@
-package preface.analysis.util;
+package preface.analysis;
 
 import java.io.*;
 import java.util.ArrayList;
