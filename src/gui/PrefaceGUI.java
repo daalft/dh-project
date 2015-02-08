@@ -45,7 +45,6 @@ public class PrefaceGUI extends JFrame {
 	private JTextField txtpath;
 	private JTextField txtpathfilexml;
 	private JSlider slider;
-	private JTextField txtpath_1;
 	private Preface preface;
 	private boolean openOnComplete;
 	private JFileChooser jfc;
@@ -247,59 +246,6 @@ public class PrefaceGUI extends JFrame {
 		gbc_chckbxFilterStopWords.gridy = 6;
 		contentPane.add(chckbxFilterStopWords, gbc_chckbxFilterStopWords);
 		
-		JLabel lblChangeOutputPath = new JLabel("Change output path");
-		GridBagConstraints gbc_lblChangeOutputPath = new GridBagConstraints();
-		gbc_lblChangeOutputPath.insets = new Insets(0, 0, 5, 5);
-		gbc_lblChangeOutputPath.anchor = GridBagConstraints.WEST;
-		gbc_lblChangeOutputPath.gridx = 1;
-		gbc_lblChangeOutputPath.gridy = 7;
-		contentPane.add(lblChangeOutputPath, gbc_lblChangeOutputPath);
-		
-		txtpath_1 = new JTextField();
-
-		txtpath_1.setForeground(SystemColor.textText);
-		txtpath_1.setText("./");
-		GridBagConstraints gbc_txtpath_1 = new GridBagConstraints();
-		gbc_txtpath_1.insets = new Insets(0, 0, 5, 5);
-		gbc_txtpath_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtpath_1.gridx = 2;
-		gbc_txtpath_1.gridy = 7;
-		contentPane.add(txtpath_1, gbc_txtpath_1);
-		txtpath_1.setColumns(10);
-		
-		JButton btnSelect_2 = new JButton("Select...");
-		btnSelect_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jfc.setFileFilter(new FileFilter() {
-
-					@Override
-					public boolean accept(File f) {
-						return f.isDirectory();
-					}
-
-					@Override
-					public String getDescription() {
-						return "";
-					}
-					
-				});
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				if (jfc.showSaveDialog(null)==JFileChooser.APPROVE_OPTION) {
-					String path = jfc.getSelectedFile().getPath();
-					if (!path.endsWith("/"))
-						path += "/";
-					txtpath_1.setText(path);
-				}
-			}
-			
-		});
-		
-		GridBagConstraints gbc_btnSelect_2 = new GridBagConstraints();
-		gbc_btnSelect_2.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSelect_2.gridx = 3;
-		gbc_btnSelect_2.gridy = 7;
-		contentPane.add(btnSelect_2, gbc_btnSelect_2);
-		
 		final JCheckBox chckbxOpenResultPage = new JCheckBox("Open result page on completion");
 		chckbxOpenResultPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -333,12 +279,11 @@ public class PrefaceGUI extends JFrame {
 	private void start () {
 		File dir = new File(txtpath.getText());
 		File index = new File(txtpathfilexml.getText());
-		preface.setOutputDir(txtpath_1.getText());
 		preface.run(dir, index);
 		if (openOnComplete) {
 			
 		} else {
-			JOptionPane.showMessageDialog(null, "Preface calculation completed.\nPlease open " + txtpath_1.getText() + "index.html");
+			JOptionPane.showMessageDialog(null, "Preface calculation completed.\nPlease open ./visual/index.html");
 		}
 	}
 }
