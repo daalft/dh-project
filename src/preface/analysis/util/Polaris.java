@@ -1,4 +1,4 @@
-package paragraphe.polarity;
+package preface.analysis.util;
 
 import preface.parser.element.text.interfaces.Polariseable;
 

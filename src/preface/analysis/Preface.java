@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import paragraphe.polarity.Polaris;
 import preface.analysis.result.Result;
+import preface.analysis.util.Polaris;
 import preface.analysis.util.StopWords;
 import preface.parser.Parser;
 import preface.parser.element.coreference.BookEntity;
