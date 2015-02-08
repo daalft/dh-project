@@ -30,6 +30,14 @@ public class Mention implements Cloneable {
 		this.occursInSentenceNum = occursIn;
 	}
 	
+	public Mention (String textMention, int occursIn, boolean isRepresentative, int start, int end, int head) {
+		this(textMention, occursIn);
+		this.isRepresentative = isRepresentative;
+		this.wordNumberStart = start;
+		this.wordNumberEnd = end;
+		this.wordNumberHead = head;
+	}
+	
 	public boolean isRepresentative() {
 		return isRepresentative;
 	}
@@ -77,14 +85,32 @@ public class Mention implements Cloneable {
 	public int getOccursInSentenceNum () {
 		return occursInSentenceNum;
 	}
+	
+	@Override
+	public Mention clone () {
+		return new Mention(this.textMention, this.occursInSentenceNum, this.isRepresentative, this.wordNumberStart, this.wordNumberEnd, this.wordNumberHead);
+	}
+	
+	public String toString () {
+				return  "\n" + "__________________"
+				+"\n"+"Representative?: " + this.isRepresentative()
+				+"\n"+ "Start: " + this.getWordNumberStart()
+				+"\n"+ "End: " + this.getWordNumberEnd()
+				+"\n"+ "Head: " + this.getWordNumberHead()
+				+"\n"+ "Text: "+ this.getTextMention();
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (isRepresentative ? 1231 : 1237);
 		result = prime * result + occursInSentenceNum;
 		result = prime * result
 				+ ((textMention == null) ? 0 : textMention.hashCode());
+		result = prime * result + wordNumberEnd;
+		result = prime * result + wordNumberHead;
+		result = prime * result + wordNumberStart;
 		return result;
 	}
 
@@ -97,6 +123,8 @@ public class Mention implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		Mention other = (Mention) obj;
+		if (isRepresentative != other.isRepresentative)
+			return false;
 		if (occursInSentenceNum != other.occursInSentenceNum)
 			return false;
 		if (textMention == null) {
@@ -104,20 +132,12 @@ public class Mention implements Cloneable {
 				return false;
 		} else if (!textMention.equals(other.textMention))
 			return false;
+		if (wordNumberEnd != other.wordNumberEnd)
+			return false;
+		if (wordNumberHead != other.wordNumberHead)
+			return false;
+		if (wordNumberStart != other.wordNumberStart)
+			return false;
 		return true;
-	}
-	
-	@Override
-	public Mention clone () {
-		return new Mention(this.textMention, this.occursInSentenceNum);
-	}
-	
-	public String toString () {
-				return  "\n" + "__________________"
-				+"\n"+"Representative?: " + this.isRepresentative()
-				+"\n"+ "Start: " + this.getWordNumberStart()
-				+"\n"+ "End: " + this.getWordNumberEnd()
-				+"\n"+ "Head: " + this.getWordNumberHead()
-				+"\n"+ "Text: "+ this.getTextMention();
 	}
 }
