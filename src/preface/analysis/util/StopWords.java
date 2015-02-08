@@ -3,11 +3,21 @@ package preface.analysis.util;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Stop word filtering utility class
+ * @author David
+ *
+ */
 public class StopWords {
 
+	/**
+	 * Stop word list
+	 */
 	List<String> words;
 	
+	/**
+	 * Constructor
+	 */
 	public StopWords() {
 		words = new ArrayList<>();
 		try {
@@ -17,6 +27,10 @@ public class StopWords {
 		}
 	}
 
+	/**
+	 * Initializer
+	 * @throws IOException
+	 */
 	private void initialize() throws IOException {
 		File defaultFile = new File("./data/stopwords.in");
 		if (defaultFile.canRead()) {
@@ -32,6 +46,11 @@ public class StopWords {
 		}
 	}
 	
+	/**
+	 * Checks whether the given word is a stop word
+	 * @param word word to check
+	 * @return true if word is stop word
+	 */
 	public boolean isStopword (String word) {
 		return words.contains(word);
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 /**
- * Represents a chapter from a book consisting of paragraphs
+ * Represents a chapter from a book consisting of sentences
  * @author s2daalft
  *
  */

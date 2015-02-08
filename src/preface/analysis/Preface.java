@@ -26,34 +26,69 @@ import preface.parser.element.text.Text;
 
 /**
  * PreVisualizer Frequency Analyzer and Co-occurrence Extractor
+ * <p>
+ * Main class for extraction of information
  * @author David
  *
  */
 public class Preface {
 
+	/**
+	 * Linguistic model to use
+	 */
 	//private boolean bagOfWords;
 	/**
 	 * Search window width or -1 for unrestricted
 	 */
 	private int searchWindow = -1;
+	/**
+	 * Result map
+	 */
 	private HashMap<BookEntity, Result> map;
+	/**
+	 * Flag indicating the use of stop word filtering
+	 */
 	private boolean stopWords;
+	/**
+	 * Number of words for word cloud
+	 */
 	private int cloudWordNumber = 100;
+	/**
+	 * Output dir
+	 */
 	private String outputdir = "./visual/";
 
+	/**
+	 * Constructor
+	 */
 	public Preface () {
 		map = new HashMap<>();
 	}
 
+	/**
+	 * Sets the flag to use stop words
+	 * @param use flag
+	 */
 	public void setUseStopwords (boolean use) {
 		stopWords = use;
 	}
 
+	/**
+	 * Sets the search window
+	 * <p>
+	 * A value of -1 corresponds to unrestricted search.
+	 * @param i search window width
+	 */
 	public void setSearchWindow (int i) {
 		searchWindow = i;
 	}
 	
-	public static <K, V extends Comparable<? super V>> Map<K, V> 
+	/**
+	 * Sorts a map by value
+	 * @param map map to sort
+	 * @return sorted map
+	 */
+	private static <K, V extends Comparable<? super V>> Map<K, V> 
 	sortByValue( Map<K, V> map )
 	{
 		List<Map.Entry<K, V>> list =
@@ -75,8 +110,13 @@ public class Preface {
 		return result;
 	}
 	
+	/**
+	 * Runs Preface
+	 * @param dir directory containing chapter files
+	 * @param index index file
+	 */
 	public void run (File dir, File index) {
-		// parser block
+		// PARSER BLOCK
 		System.out.println("Parsing");
 		Parser p = new Parser();
 		p.parse(dir);
@@ -87,12 +127,16 @@ public class Preface {
 		// numerical sort => rewrite lexicographic order
 		Collections.sort(text.getChapters());
 		p.dispose();
-		// end parser block
+		// END PARSER BLOCK
 
+		// max number of chapters in book
 		int maxChapters = text.getChapters().size();
 
+		// stop words filter
 		StopWords stop = new StopWords();
 
+		// cloud calculation
+		System.err.println("Cloud computation");
 		HashMap<String, Integer> cloud = new HashMap<String, Integer>();
 		for (Chapter c : text) {
 			for (Sentence s : c) {
@@ -110,8 +154,7 @@ public class Preface {
 			}
 		}
 		Map<String, Integer> sorted = sortByValue(cloud);
-
-		System.err.println("Cloud computation");
+		
 		// more.json
 		StringBuilder sb = new StringBuilder("{\"maxChapterNumber\":").append(maxChapters);
 		sb.append(",\n\"words\":[");
@@ -125,7 +168,7 @@ public class Preface {
 		sb.deleteCharAt(sb.length()-2);
 		sb.append("]}");
 		try {
-			BufferedWriter more = new BufferedWriter(new FileWriter(new File(outputdir+"more_utc.json")));
+			BufferedWriter more = new BufferedWriter(new FileWriter(new File(outputdir+"more.json")));
 			more.write(sb.toString());
 			more.close();
 		} catch (Exception e) {
@@ -151,11 +194,7 @@ public class Preface {
 		String links = "";
 		try {
 			links = mc.networkLinksToJSONString();
-			// TODO remove
-			//			mc.oldNetworkJSON();
-			//			mc.allPersons();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -163,9 +202,9 @@ public class Preface {
 
 		// POLARIS
 		Polaris polaris = new Polaris();
-		System.out.println("Preface go");
-
+		
 		// Preface proper
+		System.out.println("Preface go");
 		for (int i = 0; i < entities.size(); i++) {
 			// fetch entities
 			BookEntity e = entities.get(i);
@@ -216,25 +255,29 @@ public class Preface {
 				}
 			}
 			if (r.isEmpty()) {
+				// add required entities even if result is empty
 				if (mc.requiredEntities().contains(e.getUniqueID())) {
 					map.put(e,r);
-					//System.err.println("Adding required entity " + e.getUniqueID());
 				}
-			} else
+			} else 
 				map.put(e, r);
 		}
 		System.out.println("Done");
 		try {
 			write(map, links);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
+	/**
+	 * Writes the calculated data to file
+	 * @param map2 data
+	 * @param links network links
+	 * @throws IOException
+	 */
 	private void write(HashMap<BookEntity, Result> map2, String links) throws IOException {
 		StringBuilder sb = new StringBuilder("{\"nodes\":[");
-
 		for (Entry<BookEntity, Result> e : map2.entrySet()) {
 			BookEntity currEnt = e.getKey();
 			Result currRes = e.getValue();
@@ -244,17 +287,25 @@ public class Preface {
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("],").append(links).append("}");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputdir+"data_utc.json")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputdir+"data.json")));
 		bw.write(sb.toString());
 		bw.close();
 	}
 
+	/**
+	 * Changes the output dir
+	 * @param s output dir
+	 */
 	public void setOutputDir (String s) {
 		if (!s.endsWith("/"))
 			s += "/";
 		outputdir = s;
 	}
 	
+	/**
+	 * Main method for command line invocation
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		if (args.length < 2) {
 			System.err.println("Wrong number of arguments! Expected 2, got " + args.length);
@@ -262,6 +313,8 @@ public class Preface {
 			System.exit(0);
 		}
 		Preface preface = new Preface();
+		// TODO
+		// use CLI parser to read/set the following attributes
 		preface.setUseStopwords(true);
 		preface.setSearchWindow(3);
 		if (args.length > 2) {

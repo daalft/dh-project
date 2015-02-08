@@ -20,14 +20,31 @@ public class Entity implements Iterable<Mention> {
 	 * Mentions
 	 */
 	private List<Mention> mentions;
+	/**
+	 * Named Entity type
+	 */
 	private NEType type;
+	/**
+	 * ID
+	 */
 	private int id; //ID from coreference. IS NOT UNIQUE! Only valid in combination with chapterNumber!
+	/**
+	 * Chapter number
+	 */
 	private int chapterNumber;//ChapterNumber from xml file
 
+	/**
+	 * Constructor
+	 */
 	public Entity () {
 		mentions = new ArrayList<Mention>();
 	}
 
+	/**
+	 * Constructor
+	 * @param representative representative mention
+	 * @param type NE type
+	 */
 	public Entity (String representative, NEType type) {
 		this();
 		this.representativeMention = representative;

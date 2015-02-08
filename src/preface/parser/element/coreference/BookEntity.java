@@ -17,21 +17,49 @@ import preface.parser.element.NEType;
  */
 public class BookEntity {
 
+	/**
+	 * ID counter
+	 */
 	private static int counter;
+	/**
+	 * Unique ID
+	 */
 	private int uniqueID;
+	/**
+	 * Representative mention
+	 */
 	private String representativeMention;
+	/**
+	 * Map of chapter-mentions
+	 */
 	private Map<Integer, List<Mention>> map;
+	/**
+	 * NE type
+	 */
 	private NEType type;
 
+	/**
+	 * Constructor
+	 */
 	public BookEntity() {
+		// auto id
 		uniqueID = counter++;
 		map = new HashMap<Integer, List<Mention>>();
 	}
 
+	/**
+	 * Sets the representative mention
+	 * @param mention mention
+	 */
 	public void setRepresentativeMention (String mention) {
 		representativeMention = mention;
 	}
 
+	/**
+	 * Adds a chapter-mention to this entity
+	 * @param chap chapter
+	 * @param m mention
+	 */
 	public void map (int chap, Mention m) {
 		if (map.containsKey(chap)) {
 			List<Mention> list = map.get(chap);
@@ -44,18 +72,35 @@ public class BookEntity {
 		}
 	}
 
+	/**
+	 * Returns uniqueID
+	 * @return unique ID
+	 */
 	public int getUniqueID () {
 		return uniqueID;
 	}
 
+	/**
+	 * Sets this NE type
+	 * @param type NE type
+	 */
 	public void setType (NEType type) {
 		this.type = type;
 	}
 
+	/**
+	 * Returns the representative mention
+	 * @return representative mention
+	 */
 	public String getRepresentativeMention () {
 		return representativeMention;
 	}
 
+	/**
+	 * Returns all the mentions in a given chapter
+	 * @param chapter chapter
+	 * @return mentions in chapter
+	 */
 	public List<Mention> getMentionsByChapter (int chapter) {
 		if (!map.containsKey(chapter)) {
 			return null;
@@ -63,10 +108,18 @@ public class BookEntity {
 		return map.get(chapter);
 	}
 
+	/**
+	 * Returns this map
+	 * @return map
+	 */
 	public Map<Integer, List<Mention>> getMap () {
 		return map;
 	}
 
+	/**
+	 * Returns this NE type
+	 * @return NE type
+	 */
 	public NEType getType () {
 		return type;
 	}
@@ -91,6 +144,10 @@ public class BookEntity {
 		return sb.toString();
 	}
 	
+	/**
+	 * Returns a partial JSON String representation
+	 * @return partial JSON String
+	 */
 	public String toJSON () {
 		return "\"name\":\""+representativeMention+"\",\n\"id\":"+uniqueID;
 	}

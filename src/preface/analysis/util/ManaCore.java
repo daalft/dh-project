@@ -28,13 +28,34 @@ import preface.parser.element.coreference.Mention;
  */
 public class ManaCore {
 
+	/**
+	 * Chains
+	 */
 	private List<Chain> chains;
+	/**
+	 * Chapter entities
+	 */
 	private List<Entity> entities;
+	/**
+	 * Book entities
+	 */
 	private List<BookEntity> bookEntities;
+	/**
+	 * Entity-chapter map
+	 */
 	private Map<BookEntity, List<Integer>> entityChapterMap;
+	/**
+	 * Entity network
+	 */
 	private Map<Doublet<Integer, Integer>, Integer> entityNetwork;
+	/**
+	 * Flag indicating whether to restrict analysis to PERSON
+	 */
 	private boolean limitToPerson;
 
+	/**
+	 * No-arg constructor
+	 */
 	public ManaCore() {
 		chains = new ArrayList<>();
 		entities = new ArrayList<>();
@@ -43,6 +64,11 @@ public class ManaCore {
 		entityNetwork = new HashMap<Doublet<Integer, Integer>, Integer>();
 	}
 
+	/**
+	 * Constructor
+	 * @param entities chapter entities
+	 * @param chains chains
+	 */
 	public ManaCore(List<Entity> entities, List<Chain> chains) {
 		this();
 		this.chains = chains;
@@ -68,65 +94,71 @@ public class ManaCore {
 		return true;
 	}
 
+	/**
+	 * Builds book-spanning entities from information about 
+	 * chapter entities and chains
+	 * @return true on success
+	 */
 	private boolean buildBookEntities () {
 		for (Chain chain : chains) {		
+			// get simplified string representation
 			String mention = extractName(chain.getText());
 			if (mention.isEmpty())
 				continue;
-			
+
 			// TODO merge entities!
 
 			for (EntityReference ref : chain.getEntityReferences()) {
 				Entity e = lookup(ref);
-				
-					BookEntity be = null;
-					boolean exists = exists(mention);
-					if (exists) { // direct match 
-						be = getEntityByMention(mention);
-					} else {
-						// merge with entity
-						if (fuzzyExist(mention)) {
-							// TODO not implemented
-						}
-						// create new entity
-						else {
+				BookEntity be = null;
+				boolean exists = exists(mention);
+				if (exists) { // direct match 
+					be = getEntityByMention(mention);
+				} else {
+					// merge with entity
+					if (fuzzyExist(mention)) {
+						// TODO not implemented
+					}
+					// create new entity
+					else {
 						be = new BookEntity();
 						be.setRepresentativeMention(mention);
-						}
 					}
-					for (Mention m : e) {
-						
-						int chapNum = ref.getChapterNumber();
-						
-						be.map(chapNum, m);
-						be.setType(e.getType());
-					}
-					if (!exists) {
-						bookEntities.add(be);
-					}
-				
+				}
+				for (Mention m : e) {
+					int chapNum = ref.getChapterNumber();
+					be.map(chapNum, m);
+					be.setType(e.getType());
+				}
+				if (!exists) {
+					bookEntities.add(be);
+				}	
 			}
 		}
 		return true;
 	}
 
 	private boolean fuzzyExist(String mention) {
-		for (BookEntity be : bookEntities) {
-			for (Entry<Integer, List<Mention>> e : be.getMap().entrySet()) {
-				e.getKey();
-				List<Mention> mentions = e.getValue();
-				for (Mention m : mentions) {
-					// TODO implement
-					if (m.getTextMention().matches("")) {
-						// return true;
-						return false;
-					}
-				}
-			}
-		}
+//		for (BookEntity be : bookEntities) {
+//			for (Entry<Integer, List<Mention>> e : be.getMap().entrySet()) {
+//				e.getKey();
+//				List<Mention> mentions = e.getValue();
+//				for (Mention m : mentions) {
+//					// TODO implement
+//					if (m.getTextMention().matches("")) {
+//						// return true;
+//					}
+//				}
+//			}
+//		}
 		return false;
 	}
 
+	/**
+	 * Returns a book entity that matches the given mention
+	 * @param mention mention
+	 * @return book entitiy
+	 */
 	private BookEntity getEntityByMention(String mention) {
 		for (BookEntity be : bookEntities) {
 			if (be.getRepresentativeMention().equals(mention))
@@ -135,6 +167,11 @@ public class ManaCore {
 		return null;
 	}
 
+	/**
+	 * Returns true if a book entity with the given mention exists
+	 * @param mention mention to check
+	 * @return true if book entity exists
+	 */
 	private boolean exists(String mention) {
 		for (BookEntity be : bookEntities) {
 			if (be.getRepresentativeMention().equals(mention))
@@ -143,10 +180,19 @@ public class ManaCore {
 		return false;
 	}
 
+	/**
+	 * Simple name extraction/simplification
+	 * 
+	 * @param text text to simplify/extract name from
+	 * @return string
+	 */
 	private String extractName(String text) {
 		// there are a lot of recurrent names with slight variation
 		// => too many nodes in the graph!
 		Pattern name = Pattern.compile("(([A-Z][a-z]+)([A-Za-z]+\\.?\\s?){0,4}([A-Z][a-z]+))");
+		// anything that is capitalized
+		// followed by none up to four capitalized words possibly followed by dot and/or space (=> Mr., St.)
+		// followed by something capitalized
 		Matcher m = name.matcher(text);
 		if (m.find()) {
 			return m.group().trim();
@@ -154,6 +200,11 @@ public class ManaCore {
 		return "";
 	}
 
+	/**
+	 * Resolves an entity reference and returns the corresponding entity
+	 * @param ref reference to resolve
+	 * @return entity
+	 */
 	private Entity lookup(EntityReference ref) {
 		for (Entity e : entities) {
 			if ((ref.getChapterNumber() == e.getChapterNumber()) && (ref.getId() == e.getId())) {
@@ -163,6 +214,10 @@ public class ManaCore {
 		return null;
 	}
 
+	/**
+	 * Builds an index of which entities occur in which chapter
+	 * @return true on success
+	 */
 	private boolean buildOccursInIndex() {
 		for (BookEntity e : bookEntities) {
 			Set<Integer> chapterNums = e.getMap().keySet();
@@ -180,6 +235,10 @@ public class ManaCore {
 		return true;
 	}
 
+	/**
+	 * Builds the entity network
+	 * @return true on success
+	 */
 	private boolean buildEntityNetwork () {
 		// require book entities
 		if (bookEntities.isEmpty())
@@ -225,12 +284,23 @@ public class ManaCore {
 		return true;
 	}
 
+	/**
+	 * Checks whether a given entity occurs in a given chapter
+	 * @param e entity
+	 * @param chapterNumber chapter number
+	 * @return true if e occurs in chapterNumber
+	 */
 	public boolean occursInChapter (BookEntity e, int chapterNumber) {
 		if (!entityChapterMap.containsKey(e))
 			return false;
 		return entityChapterMap.get(e).contains(chapterNumber);
 	}
 
+	/**
+	 * Links two entity IDs
+	 * @param i ID 1
+	 * @param j ID 2
+	 */
 	private void link(int i, int j) {
 		Doublet<Integer, Integer> d = new Doublet<>(i,j);
 		if (entityNetwork.containsKey(d)) {
@@ -240,6 +310,11 @@ public class ManaCore {
 		}
 	}
 
+	/**
+	 * Returns a JSON String representing the calculated entity network
+	 * @return JSON String network representation
+	 * @throws IOException
+	 */
 	public String networkLinksToJSONString () throws IOException {
 		StringBuilder sb = new StringBuilder("\"links\":[");
 		for (Entry<Doublet<Integer, Integer>, Integer> e : entityNetwork.entrySet()) {
@@ -251,7 +326,35 @@ public class ManaCore {
 		sb.append("]");
 		return sb.toString();
 	}
+
+	/**
+	 * Returns the calculated book entities
+	 * @return book entities
+	 */
+	public List<BookEntity> getBookEntities() {
+		return bookEntities;
+	}
+
+	/**
+	 * Calculates and returns all entities that are required for the entity network graph
+	 * @return required entities for network graph
+	 */
+	public Set<Integer> requiredEntities() {
+		Set<Integer> required = new HashSet<Integer>();
+		for (Doublet<Integer, Integer> d : entityNetwork.keySet()) {
+			required.add(d.getValue1());
+			required.add(d.getValue2());
+		}
+		return required;
+	}
 	
+	/**
+	 * Class representing a two-value object
+	 * @author David
+	 *
+	 * @param <T1> type of value 1
+	 * @param <T2> type of value 2
+	 */
 	class Doublet<T1, T2> {
 
 		private T1 value1;
@@ -313,18 +416,5 @@ public class ManaCore {
 				return false;
 			return true;
 		}
-	}
-
-	public List<BookEntity> getBookEntities() {
-		return bookEntities;
-	}
-
-	public Set<Integer> requiredEntities() {
-		Set<Integer> required = new HashSet<Integer>();
-		for (Doublet<Integer, Integer> d : entityNetwork.keySet()) {
-			required.add(d.getValue1());
-			required.add(d.getValue2());
-		}
-		return required;
 	}
 }

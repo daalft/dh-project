@@ -4,7 +4,11 @@ import preface.parser.element.text.interfaces.Polariseable;
 
 import java.util.*;
 import java.io.*;
-
+/**
+ * Provides polarity information and polarity annotation.
+ * @author David
+ *
+ */
 public class Polaris {
 
 
@@ -63,8 +67,10 @@ public class Polaris {
 	}
 	
 	/**
-	 * Annotates a word
-	 * 
+	 * Annotates a word with polarity if information is present.
+	 * <p>
+	 * If no information about given word is present, word is 
+	 * returned without annotation.
 	 * @param word word to annotate
 	 * @return word with annotation
 	 */
