@@ -2,8 +2,12 @@ package preface.analysis;
 
 import java.io.*;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import paragraphe.polarity.Polaris;
@@ -34,6 +38,8 @@ public class Preface {
 	private int searchWindow = -1;
 	private HashMap<BookEntity, Result> map;
 	private boolean stopWords;
+	private int cloudWordNumber = 100;
+	private String outputdir = "./";
 
 	public Preface () {
 		map = new HashMap<>();
@@ -44,14 +50,31 @@ public class Preface {
 	}
 
 	public void setSearchWindow (int i) {
-		if (i < 1) {
-			System.err.println("Search window size must be at least 1"
-					+ "\nor -1 for unrestricted window size");
-			return;
-		}
 		searchWindow = i;
 	}
+	
+	public static <K, V extends Comparable<? super V>> Map<K, V> 
+	sortByValue( Map<K, V> map )
+	{
+		List<Map.Entry<K, V>> list =
+				new LinkedList<>( map.entrySet() );
+		Collections.sort( list, new Comparator<Map.Entry<K, V>>()
+				{
+			@Override
+			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
+			{
+				return (o2.getValue()).compareTo( o1.getValue() );
+			}
+				} );
 
+		Map<K, V> result = new LinkedHashMap<>();
+		for (Map.Entry<K, V> entry : list)
+		{
+			result.put( entry.getKey(), entry.getValue() );
+		}
+		return result;
+	}
+	
 	public void run (File dir, File index) {
 		// parser block
 		System.out.println("Parsing");
@@ -61,12 +84,54 @@ public class Preface {
 		List<Entity> chapterEntities = p.getEntities();
 		List<Chain> chains = p.getChains();
 		Text text = p.getText();
+		// numerical sort => rewrite lexicographic order
 		Collections.sort(text.getChapters());
 		p.dispose();
 		// end parser block
-		
+
+		int maxChapters = text.getChapters().size();
+
 		StopWords stop = new StopWords();
-		
+
+		HashMap<String, Integer> cloud = new HashMap<String, Integer>();
+		for (Chapter c : text) {
+			for (Sentence s : c) {
+				for (AnnotatedWord w : s) {
+					if (stop.isStopword(w.getLemma()))
+						continue;
+					if (w.getLemma().matches("[\\W\\d]+"))
+						continue;
+					if (cloud.containsKey(w.getLemma())) {
+						cloud.put(w.getLemma(), cloud.get(w.getLemma())+1);
+					} else {
+						cloud.put(w.getLemma(), 1);
+					}
+				}
+			}
+		}
+		Map<String, Integer> sorted = sortByValue(cloud);
+
+		System.err.println("Cloud computation");
+		// more.json
+		StringBuilder sb = new StringBuilder("{\"maxChapterNumber\":").append(maxChapters);
+		sb.append(",\n\"words\":[");
+		int count = 0;
+		for (Entry<String, Integer> e : sorted.entrySet()) {
+			if (count >= cloudWordNumber )
+				break;
+			sb.append("{\"word\":\"").append(e.getKey()).append("\",\"weight\":").append(e.getValue().intValue()).append("},\n");
+			count++;
+		}
+		sb.deleteCharAt(sb.length()-2);
+		sb.append("]}");
+		try {
+			BufferedWriter more = new BufferedWriter(new FileWriter(new File(outputdir+"more_utc.json")));
+			more.write(sb.toString());
+			more.close();
+		} catch (Exception e) {
+
+		}
+
 		// NE Type resolution
 		System.out.println("NETYPE resolution");
 		for (Entity e : chapterEntities) {
@@ -78,7 +143,7 @@ public class Preface {
 				e.setType(c.getSentence(sentence).getWord(head).getType());
 			}
 		}
-		
+
 		// MANACORE
 		System.out.println("MANACORE start");
 		ManaCore mc = new ManaCore(chapterEntities, chains);
@@ -87,8 +152,8 @@ public class Preface {
 		try {
 			links = mc.networkLinksToJSONString();
 			// TODO remove
-//			mc.oldNetworkJSON();
-//			mc.allPersons();
+			//			mc.oldNetworkJSON();
+			//			mc.allPersons();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -99,7 +164,7 @@ public class Preface {
 		// POLARIS
 		Polaris polaris = new Polaris();
 		System.out.println("Preface go");
-		
+
 		// Preface proper
 		for (int i = 0; i < entities.size(); i++) {
 			// fetch entities
@@ -169,7 +234,7 @@ public class Preface {
 
 	private void write(HashMap<BookEntity, Result> map2, String links) throws IOException {
 		StringBuilder sb = new StringBuilder("{\"nodes\":[");
-		
+
 		for (Entry<BookEntity, Result> e : map2.entrySet()) {
 			BookEntity currEnt = e.getKey();
 			Result currRes = e.getValue();
@@ -179,11 +244,17 @@ public class Preface {
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("],").append(links).append("}");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("network5.json")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputdir+"data_utc.json")));
 		bw.write(sb.toString());
 		bw.close();
 	}
 
+	public void setOutputDir (String s) {
+		if (!s.endsWith("/"))
+			s += "/";
+		outputdir = s;
+	}
+	
 	public static void main(String[] args) {
 		if (args.length < 2) {
 			System.err.println("Wrong number of arguments! Expected 2, got " + args.length);
@@ -193,6 +264,9 @@ public class Preface {
 		Preface preface = new Preface();
 		preface.setUseStopwords(true);
 		preface.setSearchWindow(3);
+		if (args.length > 2) {
+			preface.setOutputDir(args[2]);
+		}
 		File dir = new File(args[0]);
 		File index = new File(args[1]);
 		preface.run(dir, index);
