@@ -67,6 +67,7 @@ public class Parser {
 		AnnotatedWord annotatedWord = null;
 
 		for (File f : fileList){
+			if (f.isDirectory()) { continue; }
 			try {
 				Entity currEnt = null;		//enth�lt die entity (coreference) mentions werden per .add(mention) zu der entity hinzugef�gt.
 				Mention currMen = null;
